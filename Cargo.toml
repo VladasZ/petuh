@@ -4,9 +4,12 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
-teloxide = {  version = "0.14", features = ["full"] }
-tokio = {  version = "1.44", features = ["full"] }
+teloxide = { version = "0.14", features = ["full"] }
+tokio = { version = "1.44", features = ["full"] }
 log = "0.4"
 dotenv = "0.15"
 pretty_env_logger = "0.5"
 rand = "0.8"
+reqwest = "0.12"
+serde = { version = "1.0", features = ["derive"] }
+anyhow = "1.0"
