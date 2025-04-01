@@ -10,10 +10,10 @@ use teloxide::utils::command::BotCommands;
 #[derive(BotCommands, Clone)]
 #[command(
     rename_rule = "lowercase",
-    description = "These commands are supported:"
+    description = "🐓 Петушиные команды:"
 )]
 enum Command {
-    #[command(description = "display this text.")]
+    #[command(description = "Помощь петушары.")]
     Help,
     #[command(description = "Приветствие.")]
     K,
@@ -39,7 +39,7 @@ async fn handle_command(bot: Bot, msg: Message, cmd: Command) -> ResponseResult<
                 .await?;
         }
         Command::K => {
-            bot.send_message(msg.chat.id, "Кукарекуууу я петушара!!!")
+            bot.send_message(msg.chat.id, "Кукарекуууу я петушара!!! Я кукорекою як пятух 🐓. Кок")
                 .await?;
         }
         Command::M => {
@@ -51,7 +51,7 @@ async fn handle_command(bot: Bot, msg: Message, cmd: Command) -> ResponseResult<
                 .await?;
         }
         Command::Gm => {
-            bot.send_message(msg.chat.id, "Доброе утро петушары ебаные!")
+            bot.send_message(msg.chat.id, "Доброе утро петушары ебаные! 🐓")
                 .await?;
         }
         Command::Kto => {
@@ -73,7 +73,7 @@ async fn handle_command(bot: Bot, msg: Message, cmd: Command) -> ResponseResult<
         }
         Command::Vladik => {
             let user_id = 795896962; // Replace with actual user ID
-            let message = format!("Hello <a href=\"tg://user?id={}\">Пятух!!!</a>!", user_id);
+            let message = format!("Это великий пятушара - <a href=\"tg://user?id={}\">Пятух!!!</a>!", user_id);
 
             bot.send_message(msg.chat.id, message)
                 .parse_mode(ParseMode::Html)
@@ -90,7 +90,7 @@ async fn handle_text(bot: Bot, msg: Message) -> ResponseResult<()> {
         MessageKind::Common(ref common_message) => match &common_message.media_kind {
             MediaKind::Sticker(sticker) => {
                 if sticker.sticker.file.unique_id == "AgADl14AAqISEEs" {
-                    bot.send_message(msg.chat.id, "@maxon8871 !! Ну ты и петух!!")
+                    bot.send_message(msg.chat.id, "@maxon8871 !! Ну ты и петух!!!")
                         .await?;
                 }
             }
@@ -100,6 +100,10 @@ async fn handle_text(bot: Bot, msg: Message) -> ResponseResult<()> {
     }
 
     if let Some(text) = msg.text() {
+        if text.contains("--version") || text.contains("-V") {
+            bot.send_message(msg.chat.id, "Пятушара 0.1.1").await?;
+        }
+
         if text.contains("погода") {
             let weather = get_weather(text).await.unwrap();
             bot.send_message(msg.chat.id, weather).await?;
