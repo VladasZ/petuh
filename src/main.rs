@@ -1,3 +1,6 @@
+mod chat_gpt;
+
+use crate::chat_gpt::query_petuh;
 use anyhow::Result;
 use rand::prelude::SliceRandom;
 use reqwest::Client;
@@ -8,10 +11,7 @@ use teloxide::types::{MediaKind, Message, MessageKind};
 use teloxide::utils::command::BotCommands;
 
 #[derive(BotCommands, Clone)]
-#[command(
-    rename_rule = "lowercase",
-    description = "🐓 Петушиные команды:"
-)]
+#[command(rename_rule = "lowercase", description = "🐓 Петушиные команды:")]
 enum Command {
     #[command(description = "Помощь петушары.")]
     Help,
@@ -39,8 +39,11 @@ async fn handle_command(bot: Bot, msg: Message, cmd: Command) -> ResponseResult<
                 .await?;
         }
         Command::K => {
-            bot.send_message(msg.chat.id, "Кукарекуууу я петушара!!! Я кукорекою як пятух 🐓. Кок")
-                .await?;
+            bot.send_message(
+                msg.chat.id,
+                "Кукарекуууу я петушара!!! Я кукорекою як пятух 🐓. Кок",
+            )
+            .await?;
         }
         Command::M => {
             bot.send_message(msg.chat.id, "Максим Пятушара!!!! 🐓🐓🐓🐓🐓")
@@ -73,7 +76,10 @@ async fn handle_command(bot: Bot, msg: Message, cmd: Command) -> ResponseResult<
         }
         Command::Vladik => {
             let user_id = 795896962; // Replace with actual user ID
-            let message = format!("Это великий пятушара - <a href=\"tg://user?id={}\">Пятух!!!</a>!", user_id);
+            let message = format!(
+                "Это великий пятушара - <a href=\"tg://user?id={}\">Пятух!!!</a>!",
+                user_id
+            );
 
             bot.send_message(msg.chat.id, message)
                 .parse_mode(ParseMode::Html)
@@ -100,12 +106,38 @@ async fn handle_text(bot: Bot, msg: Message) -> ResponseResult<()> {
     }
 
     if let Some(text) = msg.text() {
-        if text.contains("--version") || text.contains("-V") {
-            bot.send_message(msg.chat.id, "Пятушара 0.1.1").await?;
+        let text = text.to_lowercase();
+
+        if text.starts_with("пятух, ") {
+            let text = &text["пятух, ".len()..];
+
+            fn escape_markdown_v2(input: &str) -> String {
+                let special_chars = [
+                    '_', '*', '[', ']', '(', ')', '~', '`', '>', '#', '+', '-', '=', '|', '{', '}',
+                    '.', '!',
+                ];
+                let mut result = String::new();
+
+                for c in input.chars() {
+                    if special_chars.contains(&c) {
+                        result.push('\\');
+                    }
+                    result.push(c);
+                }
+
+                result
+            }
+
+            bot.send_message(msg.chat.id, query_petuh(&text).await.unwrap())
+                .await?;
+        }
+
+        if text.contains("--version") || text.contains("-v") {
+            bot.send_message(msg.chat.id, "Пятушара 0.2.4").await?;
         }
 
         if text.contains("погода") {
-            let weather = get_weather(text).await.unwrap();
+            let weather = get_weather(&text).await.unwrap();
             bot.send_message(msg.chat.id, weather).await?;
         }
 
@@ -128,7 +160,7 @@ async fn handle_text(bot: Bot, msg: Message) -> ResponseResult<()> {
 }
 
 #[tokio::main]
-async fn main() {
+async fn main() -> Result<()> {
     pretty_env_logger::init();
 
     dotenv::dotenv().ok();
@@ -149,6 +181,8 @@ async fn main() {
         .build()
         .dispatch()
         .await;
+
+    Ok(())
 }
 
 #[derive(Debug, Deserialize)]
@@ -174,7 +208,7 @@ async fn get_weather(query: &str) -> Result<String> {
 
     dbg!(&city);
 
-    dotenv::dotenv().ok();
+    dotenv::dotenv()?;
     // let city = text
     //     .split_whitespace()
     //     .nth(1)
