@@ -11,8 +11,10 @@ use teloxide::types::ParseMode;
 use teloxide::types::{MediaKind, Message, MessageKind};
 use teloxide::utils::command::BotCommands;
 
+pub const APP_VERSION: &str = env!("CARGO_PKG_VERSION");
+
 #[derive(BotCommands, Clone)]
-#[command(rename_rule = "lowercase", description = "🐓 Петушиные команды:")]
+#[command(rename_rule = "lowercase", description = r"🐓 Петушиные команды:")]
 enum Command {
     #[command(description = "Помощь петушары.")]
     Help,
@@ -160,7 +162,15 @@ async fn handle_text(bot: Bot, msg: Message) -> ResponseResult<()> {
         if text.contains("--version") || text.contains("-v") {
             bot.send_message(
                 msg.chat.id,
-                format!("Пятушара v0.4.4 Стойкость очка: {O4KO_STRENGTH}"),
+                format!(
+                    r"
+Курятник v{APP_VERSION}
+
+Доступные петухи:
+- Денис: Стойкость очка: {O4KO_STRENGTH}
+- Зул: Стойкость очка: {O4KO_STRENGTH}
+- Пятух: Стойкость очка: не сгорает"
+                ),
             )
             .await?;
         }
