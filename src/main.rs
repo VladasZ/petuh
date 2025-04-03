@@ -31,7 +31,7 @@ enum Command {
     Vladik,
 }
 
-const O4KO_STRENGTH: u32 = 10;
+const O4KO_STRENGTH: u32 = 20;
 
 async fn handle_command(bot: Bot, msg: Message, cmd: Command) -> ResponseResult<()> {
     dbg!(&msg);
@@ -158,7 +158,7 @@ async fn handle_text(bot: Bot, msg: Message) -> ResponseResult<()> {
         }
 
         if text.contains("--version") || text.contains("-v") {
-            bot.send_message(msg.chat.id, "Пятушара 0.4.2").await?;
+            bot.send_message(msg.chat.id, "Пятушара 0.4.3").await?;
         }
 
         if text.contains("погода") {
