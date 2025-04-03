@@ -158,7 +158,11 @@ async fn handle_text(bot: Bot, msg: Message) -> ResponseResult<()> {
         }
 
         if text.contains("--version") || text.contains("-v") {
-            bot.send_message(msg.chat.id, "Пятушара 0.4.3").await?;
+            bot.send_message(
+                msg.chat.id,
+                format!("Пятушара v0.4.4 Стойкость очка: {O4KO_STRENGTH}"),
+            )
+            .await?;
         }
 
         if text.contains("погода") {
