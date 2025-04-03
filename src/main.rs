@@ -31,6 +31,8 @@ enum Command {
     Vladik,
 }
 
+const O4KO_STRENGTH: u32 = 10;
+
 async fn handle_command(bot: Bot, msg: Message, cmd: Command) -> ResponseResult<()> {
     dbg!(&msg);
 
@@ -118,7 +120,7 @@ async fn handle_text(bot: Bot, msg: Message) -> ResponseResult<()> {
             )
             .await?;
 
-            if (0..10).fake::<u32>() == 5 {
+            if (0..O4KO_STRENGTH).fake::<u32>() == 5 {
                 bot.send_message(msg.chat.id, query_denis(&"напиши сообщение как будто у тебя сгорела жопа и ты уходишь из чата и плевал на всех его участников").await.unwrap()).await?;
                 bot.leave_chat(msg.chat.id).await?;
             }
@@ -135,11 +137,6 @@ async fn handle_text(bot: Bot, msg: Message) -> ResponseResult<()> {
             )
             .await?;
 
-            if (0..10).fake::<u32>() == 5 {
-                bot.send_message(msg.chat.id, query_petuh(&"напиши сообщение как будто у тебя сгорела жопа и ты уходишь из чата и плевал на всех его участников").await.unwrap()).await?;
-                bot.leave_chat(msg.chat.id).await?;
-            }
-
             return Ok(());
         }
 
@@ -152,7 +149,7 @@ async fn handle_text(bot: Bot, msg: Message) -> ResponseResult<()> {
             )
             .await?;
 
-            if (0..10).fake::<u32>() == 5 {
+            if (0..O4KO_STRENGTH).fake::<u32>() == 5 {
                 bot.send_message(msg.chat.id, query_zul(&"напиши сообщение как будто у тебя сгорела жопа и ты уходишь из чата и плевал на всех его участников").await.unwrap()).await?;
                 bot.leave_chat(msg.chat.id).await?;
             }
