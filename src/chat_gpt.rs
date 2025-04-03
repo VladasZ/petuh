@@ -31,13 +31,20 @@ struct ChatMessageContent {
 
 #[tokio::test]
 async fn test_gpt() -> Result<()> {
-    dbg!(query_petuh("Любишь пшено?").await);
+    dotenv::dotenv()?;
+
+    dbg!(query_zul("Как пожарить котлеты?").await?);
+    dbg!(query_petuh("Как пожарить котлеты?").await?);
 
     Ok(())
 }
 
 pub async fn query_petuh(input: &str) -> Result<String> {
-    query_gpt(&format!("Ответь на этот запрос как будто ты веселый петух который живет в сарае. Ты говоришь как колхозный пятух который живет в дзяроуне. C Беларуским говорком. К собеседнику обращайся - Крыж.: {input}")).await
+    query_gpt(&format!("{} {input}", std::env::var("PETUH_QUERY")?)).await
+}
+
+pub async fn query_zul(input: &str) -> Result<String> {
+    query_gpt(&format!("{} {input}", std::env::var("ZUL_QUERY")?)).await
 }
 
 async fn query_gpt(input: &str) -> Result<String> {

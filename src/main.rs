@@ -1,6 +1,6 @@
 mod chat_gpt;
 
-use crate::chat_gpt::query_petuh;
+use crate::chat_gpt::{query_petuh, query_zul};
 use anyhow::Result;
 use rand::prelude::SliceRandom;
 use reqwest::Client;
@@ -111,29 +111,23 @@ async fn handle_text(bot: Bot, msg: Message) -> ResponseResult<()> {
         if text.starts_with("пятух, ") {
             let text = &text["пятух, ".len()..];
 
-            fn escape_markdown_v2(input: &str) -> String {
-                let special_chars = [
-                    '_', '*', '[', ']', '(', ')', '~', '`', '>', '#', '+', '-', '=', '|', '{', '}',
-                    '.', '!',
-                ];
-                let mut result = String::new();
-
-                for c in input.chars() {
-                    if special_chars.contains(&c) {
-                        result.push('\\');
-                    }
-                    result.push(c);
-                }
-
-                result
-            }
-
             bot.send_message(msg.chat.id, query_petuh(&text).await.unwrap())
                 .await?;
+
+            return Ok(());
+        }
+
+        if text.starts_with("зул, ") {
+            let text = &text["зул, ".len()..];
+
+            bot.send_message(msg.chat.id, query_zul(&text).await.unwrap())
+                .await?;
+
+            return Ok(());
         }
 
         if text.contains("--version") || text.contains("-v") {
-            bot.send_message(msg.chat.id, "Пятушара 0.2.4").await?;
+            bot.send_message(msg.chat.id, "Пятушара 0.3.0").await?;
         }
 
         if text.contains("погода") {
