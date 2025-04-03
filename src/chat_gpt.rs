@@ -1,32 +1,11 @@
 use anyhow::Result;
 use reqwest::Client;
-use serde::{Deserialize, Serialize};
-
-#[derive(Serialize)]
-struct ChatMessage {
-    role: String,
-    content: String,
-}
+use serde::Serialize;
 
 #[derive(Serialize)]
 struct ChatRequest {
     model: String,
     input: String,
-}
-
-#[derive(Deserialize)]
-struct ChatResponse {
-    choices: Vec<Choice>,
-}
-
-#[derive(Deserialize)]
-struct Choice {
-    message: ChatMessageContent,
-}
-
-#[derive(Deserialize)]
-struct ChatMessageContent {
-    content: String,
 }
 
 #[tokio::test]
