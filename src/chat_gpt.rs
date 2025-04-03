@@ -33,8 +33,9 @@ struct ChatMessageContent {
 async fn test_gpt() -> Result<()> {
     dotenv::dotenv()?;
 
-    dbg!(query_zul("Как пожарить котлеты?").await?);
-    dbg!(query_petuh("Как пожарить котлеты?").await?);
+    // dbg!(query_zul("Как пожарить котлеты?").await?);
+    // dbg!(query_petuh("Как пожарить котлеты?").await?);
+    dbg!(query_denis("Как пожарить котлеты?").await?);
 
     Ok(())
 }
@@ -45,6 +46,10 @@ pub async fn query_petuh(input: &str) -> Result<String> {
 
 pub async fn query_zul(input: &str) -> Result<String> {
     query_gpt(&format!("{} {input}", std::env::var("ZUL_QUERY")?)).await
+}
+
+pub async fn query_denis(input: &str) -> Result<String> {
+    query_gpt(&format!("{} {input}", std::env::var("DENIS_QUERY")?)).await
 }
 
 async fn query_gpt(input: &str) -> Result<String> {

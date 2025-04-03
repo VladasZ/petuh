@@ -1,7 +1,8 @@
 mod chat_gpt;
 
-use crate::chat_gpt::{query_petuh, query_zul};
+use crate::chat_gpt::{query_denis, query_petuh, query_zul};
 use anyhow::Result;
+use fake::Fake;
 use rand::prelude::SliceRandom;
 use reqwest::Client;
 use serde::Deserialize;
@@ -108,11 +109,36 @@ async fn handle_text(bot: Bot, msg: Message) -> ResponseResult<()> {
     if let Some(text) = msg.text() {
         let text = text.to_lowercase();
 
+        if text.starts_with("денис, ") {
+            let text = &text["денис, ".len()..];
+
+            bot.send_message(
+                msg.chat.id,
+                format!("Денис:\n{}", query_denis(&text).await.unwrap()),
+            )
+            .await?;
+
+            if (0..10).fake::<u32>() == 5 {
+                bot.send_message(msg.chat.id, query_denis(&"напиши сообщение как будто у тебя сгорела жопа и ты уходишь из чата и плевал на всех его участников").await.unwrap()).await?;
+                bot.leave_chat(msg.chat.id).await?;
+            }
+
+            return Ok(());
+        }
+
         if text.starts_with("пятух, ") {
             let text = &text["пятух, ".len()..];
 
-            bot.send_message(msg.chat.id, query_petuh(&text).await.unwrap())
-                .await?;
+            bot.send_message(
+                msg.chat.id,
+                format!("Пятух:\n{}", query_petuh(&text).await.unwrap()),
+            )
+            .await?;
+
+            if (0..10).fake::<u32>() == 5 {
+                bot.send_message(msg.chat.id, query_petuh(&"напиши сообщение как будто у тебя сгорела жопа и ты уходишь из чата и плевал на всех его участников").await.unwrap()).await?;
+                bot.leave_chat(msg.chat.id).await?;
+            }
 
             return Ok(());
         }
@@ -120,14 +146,22 @@ async fn handle_text(bot: Bot, msg: Message) -> ResponseResult<()> {
         if text.starts_with("зул, ") {
             let text = &text["зул, ".len()..];
 
-            bot.send_message(msg.chat.id, query_zul(&text).await.unwrap())
-                .await?;
+            bot.send_message(
+                msg.chat.id,
+                format!("Зул:\n{}", query_zul(&text).await.unwrap()),
+            )
+            .await?;
+
+            if (0..10).fake::<u32>() == 5 {
+                bot.send_message(msg.chat.id, query_zul(&"напиши сообщение как будто у тебя сгорела жопа и ты уходишь из чата и плевал на всех его участников").await.unwrap()).await?;
+                bot.leave_chat(msg.chat.id).await?;
+            }
 
             return Ok(());
         }
 
         if text.contains("--version") || text.contains("-v") {
-            bot.send_message(msg.chat.id, "Пятушара 0.3.0").await?;
+            bot.send_message(msg.chat.id, "Пятушара 0.4.2").await?;
         }
 
         if text.contains("погода") {
