@@ -33,7 +33,7 @@ enum Command {
     Vladik,
 }
 
-const O4KO_STRENGTH: u32 = 20;
+const O4KO_STRENGTH: u32 = 28;
 
 async fn handle_command(bot: Bot, msg: Message, cmd: Command) -> ResponseResult<()> {
     dbg!(&msg);
