@@ -13,6 +13,17 @@ use teloxide::utils::command::BotCommands;
 
 pub const APP_VERSION: &str = env!("CARGO_PKG_VERSION");
 
+const PETUHI: &[&str] = &[
+    "Максим",
+    "Владик",
+    "Владас",
+    "Рома",
+    "Настя",
+    "Денис",
+    "Витя",
+    "Физрук",
+];
+
 #[derive(BotCommands, Clone)]
 #[command(rename_rule = "lowercase", description = r"🐓 Петушиные команды:")]
 enum Command {
@@ -63,16 +74,7 @@ async fn handle_command(bot: Bot, msg: Message, cmd: Command) -> ResponseResult<
                 .await?;
         }
         Command::Kto => {
-            let names = [
-                "Максим",
-                "Владик",
-                "Владас",
-                "Рома",
-                "Настя",
-                "Денис",
-                "Витя",
-            ];
-            let name = names.choose(&mut rand::thread_rng()).unwrap();
+            let name = PETUHI.choose(&mut rand::thread_rng()).unwrap();
             let reply = format!("{name} — петух! 🐓");
             bot.send_message(msg.chat.id, reply).await?;
         }
@@ -166,10 +168,15 @@ async fn handle_text(bot: Bot, msg: Message) -> ResponseResult<()> {
                     r"
 Курятник v{APP_VERSION}
 
-Доступные петухи:
+Доступные интерактивные петухи для общения:
 - Денис: Стойкость очка: {O4KO_STRENGTH}
 - Зул: Стойкость очка: {O4KO_STRENGTH}
-- Пятух: Стойкость очка: не сгорает"
+- Пятух: Стойкость очка: не сгорает
+
+Список петухов:
+{}
+",
+                    PETUHI.join("\n")
                 ),
             )
             .await?;
@@ -181,16 +188,7 @@ async fn handle_text(bot: Bot, msg: Message) -> ResponseResult<()> {
         }
 
         if text == "Кто петух?" {
-            let names = [
-                "Максим",
-                "Владик",
-                "Владас",
-                "Рома",
-                "Настя",
-                "Денис",
-                "Витя",
-            ];
-            let name = names.choose(&mut rand::thread_rng()).unwrap();
+            let name = PETUHI.choose(&mut rand::thread_rng()).unwrap();
             let reply = format!("{name} — петух! 🐓");
             bot.send_message(msg.chat.id, reply).await?;
         }

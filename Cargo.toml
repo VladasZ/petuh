@@ -1,10 +1,10 @@
 [package]
 name = "glavpetuh"
-version = "0.4.6"
+version = "0.5.0"
 edition = "2024"
 
 [dependencies]
-teloxide = { version = "0.14", features = ["full"] }
+teloxide = { version = "0.15", features = ["full"] }
 tokio = { version = "1.44", features = ["full"] }
 log = "0.4"
 dotenv = "0.15"
