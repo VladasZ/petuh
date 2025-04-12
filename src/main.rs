@@ -45,6 +45,18 @@ const COMMENT_PROBABILITY: u32 = 18;
 async fn handle_command(bot: Bot, msg: Message, cmd: Command) -> ResponseResult<()> {
     dbg!(&msg);
 
+    if (0..15).fake::<u32>() == 5 {
+        bot.send_animation(
+            msg.chat.id,
+            InputFile::file_id(
+                "CgACAgIAAyEFAASIlB1pAAEBW3Jn95C0FYLjR1ttXMGad8DtIkPSIQACSVgAAtq2yUpGoSZCA0YzmjYE",
+            ),
+        )
+        .reply_to(msg.id)
+        .await?;
+        return Ok(());
+    }
+
     match cmd {
         Command::Help => {
             bot.send_message(msg.chat.id, Command::descriptions().to_string())
