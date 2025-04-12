@@ -10,6 +10,7 @@ use teloxide::prelude::*;
 use teloxide::types::ParseMode;
 use teloxide::types::{MediaKind, Message, MessageKind};
 use teloxide::utils::command::BotCommands;
+use teloxide::types::InputFile;
 
 pub const APP_VERSION: &str = env!("CARGO_PKG_VERSION");
 
@@ -20,8 +21,6 @@ const PETUHI: &[&str] = &[
     "Рома",
     "Настя",
     "Денис",
-    "Витя",
-    "Физрук",
 ];
 
 #[derive(BotCommands, Clone)]
@@ -41,6 +40,8 @@ enum Command {
     Kto,
     #[command(description = "Бросить петушиный кубик.")]
     Kub,
+    #[command(description = "Разъебать.")]
+    Rz,
     Vladik,
 }
 
@@ -80,6 +81,14 @@ async fn handle_command(bot: Bot, msg: Message, cmd: Command) -> ResponseResult<
         }
         Command::Kub => {
             bot.send_dice(msg.chat.id).await?;
+        }
+        Command::Rz => {
+               bot.send_animation(
+                msg.chat.id,
+                InputFile::file_id("CgACAgIAAyEFAASIlB1pAAEBW3Jn95C0FYLjR1ttXMGad8DtIkPSIQACSVgAAtq2yUpGoSZCA0YzmjYE"),
+        )
+    .send()
+    .await?;
         }
         Command::Vladik => {
             let user_id = 795896962; // Replace with actual user ID
