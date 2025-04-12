@@ -7,21 +7,15 @@ use rand::prelude::SliceRandom;
 use reqwest::Client;
 use serde::Deserialize;
 use teloxide::prelude::*;
+use teloxide::sugar::request::RequestReplyExt;
+use teloxide::types::InputFile;
 use teloxide::types::ParseMode;
 use teloxide::types::{MediaKind, Message, MessageKind};
 use teloxide::utils::command::BotCommands;
-use teloxide::types::InputFile;
 
 pub const APP_VERSION: &str = env!("CARGO_PKG_VERSION");
 
-const PETUHI: &[&str] = &[
-    "Максим",
-    "Владик",
-    "Владас",
-    "Рома",
-    "Настя",
-    "Денис",
-];
+const PETUHI: &[&str] = &["Максим", "Владик", "Владас", "Рома", "Настя", "Денис"];
 
 #[derive(BotCommands, Clone)]
 #[command(rename_rule = "lowercase", description = r"🐓 Петушиные команды:")]
@@ -46,6 +40,7 @@ enum Command {
 }
 
 const O4KO_STRENGTH: u32 = 28;
+const COMMENT_PROBABILITY: u32 = 18;
 
 async fn handle_command(bot: Bot, msg: Message, cmd: Command) -> ResponseResult<()> {
     dbg!(&msg);
@@ -83,12 +78,10 @@ async fn handle_command(bot: Bot, msg: Message, cmd: Command) -> ResponseResult<
             bot.send_dice(msg.chat.id).await?;
         }
         Command::Rz => {
-               bot.send_animation(
+            bot.send_animation(
                 msg.chat.id,
                 InputFile::file_id("CgACAgIAAyEFAASIlB1pAAEBW3Jn95C0FYLjR1ttXMGad8DtIkPSIQACSVgAAtq2yUpGoSZCA0YzmjYE"),
-        )
-    .send()
-    .await?;
+            ).reply_to(msg.id).await?;
         }
         Command::Vladik => {
             let user_id = 795896962; // Replace with actual user ID
@@ -107,6 +100,18 @@ async fn handle_command(bot: Bot, msg: Message, cmd: Command) -> ResponseResult<
 
 async fn handle_text(bot: Bot, msg: Message) -> ResponseResult<()> {
     dbg!(&msg);
+
+    if (0..COMMENT_PROBABILITY).fake::<u32>() == 5 {
+        bot.send_animation(
+            msg.chat.id,
+            InputFile::file_id(
+                "CgACAgIAAyEFAASIlB1pAAEBW3Jn95C0FYLjR1ttXMGad8DtIkPSIQACSVgAAtq2yUpGoSZCA0YzmjYE",
+            ),
+        )
+        .reply_to(msg.id)
+        .await?;
+        return Ok(());
+    }
 
     match msg.kind {
         MessageKind::Common(ref common_message) => match &common_message.media_kind {
@@ -176,6 +181,8 @@ async fn handle_text(bot: Bot, msg: Message) -> ResponseResult<()> {
                 format!(
                     r"
 Курятник v{APP_VERSION}
+
+Вероятность комментария: {COMMENT_PROBABILITY}
 
 Доступные интерактивные петухи для общения:
 - Денис: Стойкость очка: {O4KO_STRENGTH}
