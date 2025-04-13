@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: petuh
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: petuh
+  namespace: petuh
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: petuh
+  template:
+    metadata:
+      labels:
+        app: petuh
+    spec:
+      #      kubectl create secret docker-registry regcred --docker-server=https://index.docker.io/v1/ --docker-username=vladasz --docker-password=<your-pword> --docker-email=146100@gmail.com --namespace=petuh
+      imagePullSecrets:
+        - name: regcred
+      containers:
+        - name: petuh
+          image: vladasz/petuh:0.7.5
