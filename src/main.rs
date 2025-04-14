@@ -203,8 +203,12 @@ async fn handle_text(bot: Bot, msg: Message) -> ResponseResult<()> {
 
 Список петухов:
 {}
+
+Кручусь тут:
+{}
 ",
-                    PETUHI.join("\n")
+                    PETUHI.join("\n"),
+                    collect_system_info()
                 ),
             )
             .await?;
@@ -226,6 +230,8 @@ async fn handle_text(bot: Bot, msg: Message) -> ResponseResult<()> {
 
 #[tokio::main]
 async fn main() -> Result<()> {
+    println!("Hello");
+
     pretty_env_logger::init();
 
     dotenv::dotenv().ok();
@@ -317,4 +323,39 @@ async fn test_weather() -> Result<()> {
     dbg!(get_weather(text).await?);
 
     Ok(())
+}
+
+fn collect_system_info() -> String {
+    let mut info = String::new();
+
+    if let Ok(os_type) = sys_info::os_type() {
+        info += &format!("OS Type: {}\n", os_type);
+    }
+
+    if let Ok(os_release) = sys_info::os_release() {
+        info += &format!("OS Release: {}\n", os_release);
+    }
+
+    let hostname = whoami::hostname();
+    info += &format!("Hostname: {}\n", hostname);
+
+    if let Ok(uname) = uname::uname() {
+        info += &format!("Architecture: {}\n", uname.machine);
+        info += &format!("Sysname: {}\n", uname.sysname);
+        info += &format!("Nodename: {}\n", uname.nodename);
+        info += &format!("Kernel Release: {}\n", uname.release);
+        info += &format!("Version: {}\n", uname.version);
+    }
+
+    info += &format!("Distro: {}\n", whoami::distro());
+    info += &format!("Username: {}\n", whoami::username());
+    info += &format!("Desktop Environment: {}\n", whoami::desktop_env());
+    info += &format!("Platform: {}\n", whoami::platform());
+
+    info
+}
+
+#[test]
+fn system_info() {
+    println!("{}", &collect_system_info());
 }
