@@ -328,13 +328,13 @@ async fn test_weather() -> Result<()> {
 fn collect_system_info() -> String {
     let mut info = String::new();
 
-    if let Ok(os_type) = sys_info::os_type() {
-        info += &format!("OS Type: {}\n", os_type);
-    }
-
-    if let Ok(os_release) = sys_info::os_release() {
-        info += &format!("OS Release: {}\n", os_release);
-    }
+    // if let Ok(os_type) = sys_info::os_type() {
+    //     info += &format!("OS Type: {}\n", os_type);
+    // }
+    //
+    // if let Ok(os_release) = sys_info::os_release() {
+    //     info += &format!("OS Release: {}\n", os_release);
+    // }
 
     let hostname = whoami::hostname();
     info += &format!("Hostname: {}\n", hostname);
