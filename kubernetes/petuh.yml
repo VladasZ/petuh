@@ -23,4 +23,4 @@ spec:
         - name: regcred
       containers:
         - name: petuh
-          image: vladasz/petuh:0.7.5
+          image: vladasz/petuh:0.8.1
