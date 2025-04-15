@@ -12,3 +12,6 @@ pods:
 
 logs:
 	kubectl logs -n petuh -l app=petuh --tail=100
+
+pr:
+	gh pr create --fill
