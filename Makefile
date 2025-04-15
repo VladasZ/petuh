@@ -15,3 +15,6 @@ logs:
 
 pr:
 	gh pr create --fill
+
+stop:
+	kubectl delete deployment petuh -n petuh

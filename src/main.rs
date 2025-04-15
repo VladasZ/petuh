@@ -10,6 +10,7 @@ use teloxide::prelude::*;
 use teloxide::sugar::request::RequestReplyExt;
 use teloxide::types::InputFile;
 use teloxide::types::ParseMode;
+use teloxide::types::ReactionType;
 use teloxide::types::{MediaKind, Message, MessageKind};
 use teloxide::utils::command::BotCommands;
 
@@ -42,7 +43,8 @@ enum Command {
 }
 
 const O4KO_STRENGTH: u32 = 28;
-const COMMENT_PROBABILITY: u32 = 18;
+const COMMENT_PROBABILITY: u32 = 22;
+const REACTION_PROBABILITY: u32 = 6;
 
 async fn handle_command(bot: Bot, msg: Message, cmd: Command) -> ResponseResult<()> {
     dbg!(&msg);
@@ -121,7 +123,21 @@ async fn handle_command(bot: Bot, msg: Message, cmd: Command) -> ResponseResult<
 }
 
 async fn handle_text(bot: Bot, msg: Message) -> ResponseResult<()> {
-    dbg!(&msg);
+    if (0..REACTION_PROBABILITY).fake::<u32>() == 0 {
+        let mut reaction = bot.set_message_reaction(msg.chat.id, msg.id);
+
+        const REACTIONS: &[&str] = &["🤡", "🔥", "💯"];
+
+        // "👍", "👎", "❤", "🔥", "🥰", "👏", "😁", "🤔", "🤯", "😱", "🤬", "😢", "🎉", "🤩", "🤮", "💩", "🙏", "👌", "🕊", "🤡", "🥱", "🥴", "😍", "🐳", "❤‍🔥", "🌚", "🌭", "💯", "🤣", "⚡", "🍌", "🏆", "💔", "🤨", "😐", "🍓", "🍾", "💋", "🖕", "😈", "😴", "😭", "🤓", "👻", "👨‍💻", "👀", "🎃", "🙈", "😇", "😨", "🤝", "✍", "🤗", "🫡", "🎅", "🎄", "☃", "💅", "🤪", "🗿", "🆒", "💘", "🙉", "🦄", "😘", "💊", "🙊", "😎", "👾", "🤷‍♂", "🤷", "🤷‍♀", "😡"
+
+        let emoji = REACTIONS.choose(&mut rand::thread_rng()).unwrap();
+
+        reaction.reaction = Some(vec![ReactionType::Emoji {
+            emoji: emoji.to_string(),
+        }]);
+
+        reaction.send().await?;
+    }
 
     if (0..COMMENT_PROBABILITY).fake::<u32>() == 5 {
         bot.send_animation(
@@ -205,6 +221,7 @@ async fn handle_text(bot: Bot, msg: Message) -> ResponseResult<()> {
 Курятник v{APP_VERSION}
 
 Вероятность комментария: {COMMENT_PROBABILITY}
+Вероятность реакции: {REACTION_PROBABILITY}
 
 Доступные интерактивные петухи для общения:
 - Денис: Стойкость очка: {O4KO_STRENGTH}
