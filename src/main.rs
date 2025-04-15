@@ -28,6 +28,8 @@ enum Command {
     M,
     #[command(description = "Уважение Роме.")]
     R,
+    #[command(description = "Уважение Владику.")]
+    V,
     #[command(description = "Доброе утро.")]
     Gm,
     #[command(description = "Узнать кто петух.")]
@@ -96,7 +98,7 @@ async fn handle_command(bot: Bot, msg: Message, cmd: Command) -> ResponseResult<
             ).reply_to(msg.id).await?;
         }
         Command::Vladik => {
-            let user_id = 795896962; // Replace with actual user ID
+            let user_id = 1302643454; // Replace with actual user ID
             let message = format!(
                 "Это великий пятушара - <a href=\"tg://user?id={}\">Пятух!!!</a>!",
                 user_id
@@ -105,6 +107,14 @@ async fn handle_command(bot: Bot, msg: Message, cmd: Command) -> ResponseResult<
             bot.send_message(msg.chat.id, message)
                 .parse_mode(ParseMode::Html)
                 .await?;
+        }
+        Command::V => {
+            bot.send_message(msg.chat.id, "@blvcklawyer !! Ты че ахуел??!!!")
+                .await?;
+
+            bot.send_sticker(msg.chat.id,  InputFile::file_id(
+                "CAACAgIAAyEFAASIlB1pAAEBYNFn_iIqy0BjM-b3xUwvtxoYkpDWgQACcGAAAmh_cUkNpnr54Lr50TYE",
+            )).await?;
         }
     }
     Ok(())
@@ -280,10 +290,6 @@ async fn get_weather(query: &str) -> Result<String> {
     dbg!(&city);
 
     dotenv::dotenv()?;
-    // let city = text
-    //     .split_whitespace()
-    //     .nth(1)
-    //     .unwrap_or("Москва"); // Пользователь может написать "/погода СПБ"
 
     let client = Client::new();
 
