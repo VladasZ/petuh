@@ -18,6 +18,7 @@ spec:
       labels:
         app: petuh
     spec:
+      # apply then:
       #      kubectl create secret docker-registry regcred --docker-server=https://index.docker.io/v1/ --docker-username=vladasz --docker-password=<your-pword> --docker-email=146100@gmail.com --namespace=petuh
       imagePullSecrets:
         - name: regcred
