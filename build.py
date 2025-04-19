@@ -2,15 +2,25 @@
 
 import subprocess
 from pathlib import Path
+import platform
+import shutil
 
 # Config
 TARGET = "x86_64-unknown-linux-gnu"
 DOCKER_IMAGE = "rust:latest"
+FINAL_PATH = Path(f"target/{TARGET}/release/glavpetuh")
+
+
+def build_locally():
+    result = subprocess.run(["cargo", "build", "--release"], check=True)
+
+    # Copy the binary to the cross-targeted location
+    native_path = Path("target/release/glavpetuh")
+    FINAL_PATH.parent.mkdir(parents=True, exist_ok=True)
+    shutil.copy2(native_path, FINAL_PATH)
 
 
 def build_with_docker():
-    print(f"🔧 Starting Docker build for {TARGET}...")
-
     docker_cmd = (
         f'docker run --rm '
         f'--platform linux/amd64 '
@@ -24,12 +34,14 @@ def build_with_docker():
         f'cargo build --release --target={TARGET}"'
     )
 
-    result = subprocess.run(docker_cmd, shell=True)
-    if result.returncode != 0:
-        raise RuntimeError("❌ Build failed.")
-
-    print(f"✅ Done! Check ./target/{TARGET}/release/")
+    subprocess.run(docker_cmd, shell=True, check=True)
 
 
 if __name__ == "__main__":
-    build_with_docker()
+    system = platform.system()
+    machine = platform.machine()
+
+    if system == "Linux" and machine == "x86_64":
+        build_locally()
+    else:
+        build_with_docker()

@@ -4,7 +4,20 @@ set -euo pipefail
 
 ./build.py
 
+IMAGE_NAME="vladasz/petuh:0.8.6"
+
 docker login
-docker buildx create --use
-docker buildx inspect --bootstrap
-docker buildx build --platform linux/amd64 -t vladasz/petuh:0.8.5 --push .
+
+ARCH=$(uname -m)
+OS=$(uname -s)
+
+if [[ "$OS" == "Linux" && "$ARCH" == "x86_64" ]]; then
+    echo "Building directly with docker (native x86_64 Linux)..."
+    docker build -t "$IMAGE_NAME" .
+    docker push "$IMAGE_NAME"
+else
+    echo "Cross-building with docker buildx..."
+    docker buildx create --use || true
+    docker buildx inspect --bootstrap
+    docker buildx build --platform linux/amd64 -t "$IMAGE_NAME" --push .
+fi
