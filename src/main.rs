@@ -1,6 +1,8 @@
 mod chat_gpt;
+mod yayko;
 
 use crate::chat_gpt::{query_denis, query_petuh, query_zul};
+use crate::yayko::{yayko_command, yayko_strike};
 use anyhow::Result;
 use fake::Fake;
 use rand::prelude::SliceRandom;
@@ -39,12 +41,14 @@ enum Command {
     Kub,
     #[command(description = "Разъебать.")]
     Rz,
+    #[command(description = "Узнать количество яиц.")]
+    Yayko,
     Vladik,
 }
 
 const O4KO_STRENGTH: u32 = 28;
-const COMMENT_PROBABILITY: u32 = 35;
-const REACTION_PROBABILITY: u32 = 12;
+const COMMENT_PROBABILITY: u32 = 38;
+const REACTION_PROBABILITY: u32 = 16;
 
 async fn handle_command(bot: Bot, msg: Message, cmd: Command) -> ResponseResult<()> {
     dbg!(&msg);
@@ -118,11 +122,16 @@ async fn handle_command(bot: Bot, msg: Message, cmd: Command) -> ResponseResult<
                 "CAACAgIAAyEFAASIlB1pAAEBYNFn_iIqy0BjM-b3xUwvtxoYkpDWgQACcGAAAmh_cUkNpnr54Lr50TYE",
             )).await?;
         }
+        Command::Yayko => {
+            yayko_command(bot, msg).await.unwrap();
+        }
     }
     Ok(())
 }
 
 async fn handle_text(bot: Bot, msg: Message) -> ResponseResult<()> {
+    dbg!(&msg);
+
     if (0..REACTION_PROBABILITY).fake::<u32>() == 0 {
         let mut reaction = bot.set_message_reaction(msg.chat.id, msg.id);
 
@@ -166,6 +175,12 @@ async fn handle_text(bot: Bot, msg: Message) -> ResponseResult<()> {
 
     if let Some(text) = msg.text() {
         let text = text.to_lowercase();
+
+        if text.contains("хуярю яйцом") {
+            yayko_strike(bot, msg).await.unwrap();
+
+            return Ok(());
+        }
 
         if text.starts_with("денис, ") {
             let text = &text["денис, ".len()..];
@@ -219,6 +234,8 @@ async fn handle_text(bot: Bot, msg: Message) -> ResponseResult<()> {
                 format!(
                     r"
 Курятник v{APP_VERSION}
+
+Всех с пасхой пятухи!
 
 Вероятность комментария: {COMMENT_PROBABILITY}
 Вероятность реакции: {REACTION_PROBABILITY}
