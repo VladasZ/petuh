@@ -1,16 +1,21 @@
+use crate::PETUHI;
+use crate::phrases::NEGATIVE_EMOJIS;
+use crate::phrases::{NEGATIVE, POSITIVE, POSITIVE_EMOJIS};
 use anyhow::Result;
 use anyhow::bail;
+use rand::prelude::SliceRandom;
 use std::collections::BTreeMap;
 use teloxide::Bot;
 use teloxide::prelude::{Requester, UserId};
-use teloxide::types::Message;
-use teloxide::types::MessageEntity;
 use teloxide::types::MessageKind;
+use teloxide::types::{ChatId, Message};
 use teloxide::types::{MediaKind, MessageEntityKind};
 use tokio::sync::Mutex;
-use tokio::sync::MutexGuard;
 
-static USER_INFO: Mutex<BTreeMap<UserId, UserInfo>> = Mutex::const_new(BTreeMap::new());
+const STARTING_YAYKO: u64 = 25;
+
+static USER_INFO: Mutex<BTreeMap<ChatId, BTreeMap<UserId, UserInfo>>> =
+    Mutex::const_new(BTreeMap::new());
 
 #[derive(Debug, Clone)]
 struct UserInfo {
@@ -20,17 +25,58 @@ struct UserInfo {
     yayko_count: u64,
 }
 
+pub async fn yayko_stats(bot: Bot, msg: Message) -> Result<()> {
+    let mut chats = USER_INFO.lock().await;
+
+    let chat = chats.entry(msg.chat.id).or_default();
+
+    if chat.is_empty() {
+        bot.send_message(
+            msg.chat.id,
+            "Ни у кого нет яиц, вы все пятухи! Сначала отправьте /yayko в чат!",
+        )
+        .await?;
+
+        return Ok(());
+    }
+
+    let mut result = "Статистика курятника:\n".to_string();
+
+    for user in chat.values() {
+        if user.yayko_count == 0 {
+            result.push_str(&format!(
+                "Пхахахха {} {} {} проебал уже все яйца!! Чтобы восстановить яйца напиши: я тупой пятух\n",
+                user.firstname,
+                NEGATIVE.choose(&mut rand::thread_rng()).unwrap(),
+                NEGATIVE_EMOJIS.choose(&mut rand::thread_rng()).unwrap()
+            ));
+        } else {
+            result.push_str(&format!(
+                "{} у тебя: {}\n",
+                user.firstname, user.yayko_count
+            ));
+        }
+    }
+
+    bot.send_message(msg.chat.id, result).await?;
+
+    Ok(())
+}
+
 pub async fn yayko_command(bot: Bot, msg: Message) -> Result<()> {
     let id = msg.from.as_ref().unwrap().id;
 
     let from = msg.from.as_ref().unwrap();
 
-    let mut user = USER_INFO.lock().await;
-    let user = user.entry(id).or_insert_with(|| UserInfo {
+    let mut chats = USER_INFO.lock().await;
+
+    let chat = chats.entry(msg.chat.id).or_default();
+
+    let user = chat.entry(id).or_insert_with(|| UserInfo {
         id,
         firstname: from.first_name.clone(),
         username: from.username.clone(),
-        yayko_count: 20,
+        yayko_count: STARTING_YAYKO,
     });
 
     if user.yayko_count == 0 {
@@ -53,24 +99,26 @@ pub async fn yayko_command(bot: Bot, msg: Message) -> Result<()> {
 }
 
 pub async fn yayko_strike(bot: Bot, msg: Message) -> Result<()> {
-    let mut lock = USER_INFO.lock().await;
+    let mut chats = USER_INFO.lock().await;
+
+    let chat = chats.entry(msg.chat.id).or_default();
 
     let id = msg.from.as_ref().unwrap().id;
     let current_username = msg.from.as_ref().unwrap().first_name.clone();
 
     let from = msg.from.as_ref().unwrap();
 
-    let mut current_user = lock
+    let mut current_user = chat
         .entry(id)
         .or_insert_with(|| UserInfo {
             id,
             firstname: from.first_name.clone(),
             username: from.username.clone(),
-            yayko_count: 20,
+            yayko_count: STARTING_YAYKO,
         })
         .clone();
 
-    let target_user = extract_user(&msg, &lock).unwrap();
+    let target_user = extract_user(&msg, &chat).unwrap();
 
     dbg!(&current_user);
     dbg!(&target_user);
@@ -78,7 +126,11 @@ pub async fn yayko_strike(bot: Bot, msg: Message) -> Result<()> {
     let Some(mut target_user) = target_user.clone() else {
         bot.send_message(
             msg.chat.id,
-            "Этот пятух еще не зарегестрировался в игре! Пусть напишет /yayko сначала.",
+            format!(
+                "Этот {} еще не зарегестрировался в игре {}!  Пусть напишет /yayko сначала.",
+                NEGATIVE.choose(&mut rand::thread_rng()).unwrap(),
+                NEGATIVE_EMOJIS.choose(&mut rand::thread_rng()).unwrap()
+            ),
         )
         .await?;
 
@@ -124,16 +176,32 @@ pub async fn yayko_strike(bot: Bot, msg: Message) -> Result<()> {
 
     let win = rand::random::<bool>();
 
+    let positive = POSITIVE.choose(&mut rand::thread_rng()).unwrap();
+    let negative = NEGATIVE.choose(&mut rand::thread_rng()).unwrap();
+
+    let pos_emoji = format!(
+        "{}{}",
+        POSITIVE_EMOJIS.choose(&mut rand::thread_rng()).unwrap(),
+        POSITIVE_EMOJIS.choose(&mut rand::thread_rng()).unwrap()
+    );
+
+    let neg_emoji = format!(
+        "{}{}",
+        NEGATIVE_EMOJIS.choose(&mut rand::thread_rng()).unwrap(),
+        NEGATIVE_EMOJIS.choose(&mut rand::thread_rng()).unwrap()
+    );
+
     if win {
         message.push_str(&format!(
-            "Найййс. {} расхуярил дряхлое яйцо этого еблана {}\n",
-            current_username, target_user.firstname
+            "Найййс {pos_emoji}. {positive} {current_username} расхуярил дряхлое яйцо этого еблана {}! {} да ты {negative} {neg_emoji}!\n",
+            target_user.firstname, target_user.firstname
         ));
+
         target_user.yayko_count -= 1;
     } else {
         message.push_str(&format!(
-                "Ахахах {} проебал далбаееебина тупая 🤣. Твое дряхлое яйцо разъебалось в щепки о великое яйцо {} 💪💪💪💪💪\n",
-                current_username, target_user.firstname
+                "Ахахах {current_username} проебал как {negative} {neg_emoji}. Твое дряхлое яйцо разъебалось в щепки о великое яйцо {} 💪💪💪💪💪\n {} {positive} {pos_emoji}\n",
+                target_user.firstname, target_user.firstname
             ),
         );
         current_user.yayko_count -= 1;
@@ -146,7 +214,7 @@ pub async fn yayko_strike(bot: Bot, msg: Message) -> Result<()> {
 
     bot.send_message(msg.chat.id, message).await?;
 
-    lock.values_mut()
+    chat.values_mut()
         .find(|user| dbg!(&user.firstname) == dbg!(&current_user.firstname))
         .expect(&format!(
             "User '{}' not found in USER_INFO",
@@ -154,7 +222,7 @@ pub async fn yayko_strike(bot: Bot, msg: Message) -> Result<()> {
         ))
         .yayko_count = current_user.yayko_count;
 
-    lock.values_mut()
+    chat.values_mut()
         .find(|user| dbg!(&user.firstname) == dbg!(&target_user.firstname))
         .expect(&format!(
             "User '{}' not found in USER_INFO",
@@ -165,10 +233,7 @@ pub async fn yayko_strike(bot: Bot, msg: Message) -> Result<()> {
     Ok(())
 }
 
-fn extract_user(
-    msg: &Message,
-    lock: &MutexGuard<BTreeMap<UserId, UserInfo>>,
-) -> Result<Option<UserInfo>> {
+fn extract_user(msg: &Message, users: &BTreeMap<UserId, UserInfo>) -> Result<Option<UserInfo>> {
     let MessageKind::Common(ref common) = msg.kind else {
         bail!("Message is not a common message: {msg:?}");
     };
@@ -182,7 +247,7 @@ fn extract_user(
     if text.contains("@") {
         let username = dbg!(extract_username2(text)).unwrap();
 
-        let user = lock
+        let user = users
             .values()
             .find(|user| user.username == Some(username.clone()))
             .cloned();
@@ -198,7 +263,7 @@ fn extract_user(
 
     let target_fn = user.first_name.clone();
 
-    let user = lock
+    let user = users
         .values()
         .find(|user| user.firstname == target_fn)
         .cloned();

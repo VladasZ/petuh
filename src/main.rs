@@ -1,8 +1,9 @@
 mod chat_gpt;
+mod phrases;
 mod yayko;
 
 use crate::chat_gpt::{query_denis, query_petuh, query_zul};
-use crate::yayko::{yayko_command, yayko_strike};
+use crate::yayko::{yayko_command, yayko_stats, yayko_strike};
 use anyhow::Result;
 use fake::Fake;
 use rand::prelude::SliceRandom;
@@ -43,6 +44,8 @@ enum Command {
     Rz,
     #[command(description = "Узнать количество яиц.")]
     Yayko,
+    #[command(description = "Ститистика курятника.")]
+    Stat,
     Vladik,
 }
 
@@ -125,6 +128,9 @@ async fn handle_command(bot: Bot, msg: Message, cmd: Command) -> ResponseResult<
         Command::Yayko => {
             yayko_command(bot, msg).await.unwrap();
         }
+        Command::Stat => {
+            yayko_stats(bot, msg).await.unwrap();
+        }
     }
     Ok(())
 }
@@ -175,6 +181,15 @@ async fn handle_text(bot: Bot, msg: Message) -> ResponseResult<()> {
 
     if let Some(text) = msg.text() {
         let text = text.to_lowercase();
+
+        if text.contains("я тупой пятух") {
+            bot.send_animation(
+                msg.chat.id,
+                InputFile::file_id("CgACAgQAAyEFAASIlB1pAAEBWKZn9kmLfI2kj6gd4nMKqouqoDMW1gACowIAAij8FFPkdVtUyi5cBTYE"),
+            ).reply_to(msg.id).await?;
+
+            return Ok(());
+        }
 
         if text.contains("хуярю яйцом") {
             yayko_strike(bot, msg).await.unwrap();
