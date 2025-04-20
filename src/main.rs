@@ -16,6 +16,7 @@ use teloxide::types::ParseMode;
 use teloxide::types::ReactionType;
 use teloxide::types::{MediaKind, Message, MessageKind};
 use teloxide::utils::command::BotCommands;
+use teloxide::{ApiError, RequestError};
 
 pub const APP_VERSION: &str = env!("CARGO_PKG_VERSION");
 
@@ -191,8 +192,16 @@ async fn handle_text(bot: Bot, msg: Message) -> ResponseResult<()> {
             return Ok(());
         }
 
-        if text.contains("хуярю яйцом") {
-            yayko_strike(bot, msg).await.unwrap();
+        if text.starts_with("хуярю яйцом") || text.starts_with("Хуярю яйцом") {
+            let result = yayko_strike(bot.clone(), msg.clone()).await.map_err(|e| {
+                dbg!(&e);
+                RequestError::Api(ApiError::CantParseUrl)
+            });
+
+            if let Err(err) = result {
+                bot.send_message(msg.chat.id, format!("Я обосрался: {:?}", err))
+                    .await?;
+            }
 
             return Ok(());
         }

@@ -1,12 +1,12 @@
 use crate::PETUHI;
 use crate::phrases::NEGATIVE_EMOJIS;
 use crate::phrases::{NEGATIVE, POSITIVE, POSITIVE_EMOJIS};
-use anyhow::Result;
 use anyhow::bail;
+use anyhow::{Result, anyhow};
 use rand::prelude::SliceRandom;
 use std::collections::BTreeMap;
 use teloxide::Bot;
-use teloxide::prelude::{Requester, UserId};
+use teloxide::prelude::{Requester, ResponseResult, UserId};
 use teloxide::types::MessageKind;
 use teloxide::types::{ChatId, Message};
 use teloxide::types::{MediaKind, MessageEntityKind};
@@ -47,8 +47,8 @@ pub async fn yayko_stats(bot: Bot, msg: Message) -> Result<()> {
             result.push_str(&format!(
                 "Пхахахха {} {} {} проебал уже все яйца!! Чтобы восстановить яйца напиши: я тупой пятух\n",
                 user.firstname,
-                NEGATIVE.choose(&mut rand::thread_rng()).unwrap(),
-                NEGATIVE_EMOJIS.choose(&mut rand::thread_rng()).unwrap()
+                NEGATIVE.choose(&mut rand::thread_rng()).ok_or(anyhow!("random"))?,
+                NEGATIVE_EMOJIS.choose(&mut rand::thread_rng()).ok_or(anyhow!("random"))?
             ));
         } else {
             result.push_str(&format!(
@@ -64,9 +64,9 @@ pub async fn yayko_stats(bot: Bot, msg: Message) -> Result<()> {
 }
 
 pub async fn yayko_command(bot: Bot, msg: Message) -> Result<()> {
-    let id = msg.from.as_ref().unwrap().id;
+    let id = msg.from.as_ref().ok_or(anyhow!("msg.from.as_ref()"))?.id;
 
-    let from = msg.from.as_ref().unwrap();
+    let from = msg.from.as_ref().ok_or(anyhow!("msg.from.as_ref()"))?;
 
     let mut chats = USER_INFO.lock().await;
 
@@ -103,10 +103,15 @@ pub async fn yayko_strike(bot: Bot, msg: Message) -> Result<()> {
 
     let chat = chats.entry(msg.chat.id).or_default();
 
-    let id = msg.from.as_ref().unwrap().id;
-    let current_username = msg.from.as_ref().unwrap().first_name.clone();
+    let id = msg.from.as_ref().ok_or(anyhow!("No from"))?.id;
+    let current_username = msg
+        .from
+        .as_ref()
+        .ok_or(anyhow!("No current username"))?
+        .first_name
+        .clone();
 
-    let from = msg.from.as_ref().unwrap();
+    let from = msg.from.as_ref().ok_or(anyhow!("No from"))?;
 
     let mut current_user = chat
         .entry(id)
@@ -118,7 +123,7 @@ pub async fn yayko_strike(bot: Bot, msg: Message) -> Result<()> {
         })
         .clone();
 
-    let target_user = extract_user(&msg, &chat).unwrap();
+    let target_user = extract_user(&msg, &chat)?;
 
     dbg!(&current_user);
     dbg!(&target_user);
@@ -128,8 +133,12 @@ pub async fn yayko_strike(bot: Bot, msg: Message) -> Result<()> {
             msg.chat.id,
             format!(
                 "Этот {} еще не зарегестрировался в игре {}!  Пусть напишет /yayko сначала.",
-                NEGATIVE.choose(&mut rand::thread_rng()).unwrap(),
-                NEGATIVE_EMOJIS.choose(&mut rand::thread_rng()).unwrap()
+                NEGATIVE
+                    .choose(&mut rand::thread_rng())
+                    .ok_or(anyhow!("random"))?,
+                NEGATIVE_EMOJIS
+                    .choose(&mut rand::thread_rng())
+                    .ok_or(anyhow!("random"))?
             ),
         )
         .await?;
@@ -176,19 +185,31 @@ pub async fn yayko_strike(bot: Bot, msg: Message) -> Result<()> {
 
     let win = rand::random::<bool>();
 
-    let positive = POSITIVE.choose(&mut rand::thread_rng()).unwrap();
-    let negative = NEGATIVE.choose(&mut rand::thread_rng()).unwrap();
+    let positive = POSITIVE
+        .choose(&mut rand::thread_rng())
+        .ok_or(anyhow!("random"))?;
+    let negative = NEGATIVE
+        .choose(&mut rand::thread_rng())
+        .ok_or(anyhow!("random"))?;
 
     let pos_emoji = format!(
         "{}{}",
-        POSITIVE_EMOJIS.choose(&mut rand::thread_rng()).unwrap(),
-        POSITIVE_EMOJIS.choose(&mut rand::thread_rng()).unwrap()
+        POSITIVE_EMOJIS
+            .choose(&mut rand::thread_rng())
+            .ok_or(anyhow!("random"))?,
+        POSITIVE_EMOJIS
+            .choose(&mut rand::thread_rng())
+            .ok_or(anyhow!("random"))?
     );
 
     let neg_emoji = format!(
         "{}{}",
-        NEGATIVE_EMOJIS.choose(&mut rand::thread_rng()).unwrap(),
-        NEGATIVE_EMOJIS.choose(&mut rand::thread_rng()).unwrap()
+        NEGATIVE_EMOJIS
+            .choose(&mut rand::thread_rng())
+            .ok_or(anyhow!("random"))?,
+        NEGATIVE_EMOJIS
+            .choose(&mut rand::thread_rng())
+            .ok_or(anyhow!("random"))?
     );
 
     if win {
@@ -245,7 +266,7 @@ fn extract_user(msg: &Message, users: &BTreeMap<UserId, UserInfo>) -> Result<Opt
     let text = &text_media.text;
 
     if text.contains("@") {
-        let username = dbg!(extract_username2(text)).unwrap();
+        let username = dbg!(extract_username2(text)).ok_or(anyhow!("extract_username2"))?;
 
         let user = users
             .values()
@@ -255,7 +276,10 @@ fn extract_user(msg: &Message, users: &BTreeMap<UserId, UserInfo>) -> Result<Opt
         return Ok(user);
     }
 
-    let entity = text_media.entities.first().unwrap();
+    let entity = text_media
+        .entities
+        .first()
+        .ok_or(anyhow!("text_media.entities.first()"))?;
 
     let MessageEntityKind::TextMention { ref user } = entity.kind else {
         bail!("MessageEntityKind::TextMention: {msg:?}");
@@ -268,7 +292,7 @@ fn extract_user(msg: &Message, users: &BTreeMap<UserId, UserInfo>) -> Result<Opt
         .find(|user| user.firstname == target_fn)
         .cloned();
 
-    return Ok(user);
+    Ok(user)
 }
 
 fn extract_username2(text: &str) -> Option<String> {
