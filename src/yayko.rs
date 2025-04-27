@@ -1,6 +1,6 @@
 use crate::PETUHI;
-use crate::phrases::NEGATIVE_EMOJIS;
 use crate::phrases::{NEGATIVE, POSITIVE, POSITIVE_EMOJIS};
+use crate::phrases::{NEGATIVE_EMOJIS, negative_word};
 use anyhow::bail;
 use anyhow::{Result, anyhow};
 use rand::prelude::SliceRandom;
@@ -25,7 +25,15 @@ struct UserInfo {
     yayko_count: u64,
 }
 
-pub async fn yayko_stats(bot: Bot, msg: Message) -> Result<()> {
+pub async fn _yayko_stats(bot: Bot, msg: Message) -> Result<()> {
+    bot.send_message(
+        msg.chat.id,
+        &format!("Ты шо {}? Пасха кончилась.", negative_word()?),
+    )
+    .await?;
+
+    return Ok(());
+
     let mut chats = USER_INFO.lock().await;
 
     let chat = chats.entry(msg.chat.id).or_default();
@@ -63,7 +71,15 @@ pub async fn yayko_stats(bot: Bot, msg: Message) -> Result<()> {
     Ok(())
 }
 
-pub async fn yayko_command(bot: Bot, msg: Message) -> Result<()> {
+pub async fn _yayko_command(bot: Bot, msg: Message) -> Result<()> {
+    bot.send_message(
+        msg.chat.id,
+        &format!("Ты шо {}? Пасха кончилась.", negative_word()?),
+    )
+    .await?;
+
+    return Ok(());
+
     let id = msg.from.as_ref().ok_or(anyhow!("msg.from.as_ref()"))?.id;
 
     let from = msg.from.as_ref().ok_or(anyhow!("msg.from.as_ref()"))?;
@@ -99,6 +115,14 @@ pub async fn yayko_command(bot: Bot, msg: Message) -> Result<()> {
 }
 
 pub async fn yayko_strike(bot: Bot, msg: Message) -> Result<()> {
+    bot.send_message(
+        msg.chat.id,
+        &format!("Ты шо {}? Пасха кончилась.", negative_word()?),
+    )
+    .await?;
+
+    return Ok(());
+
     let mut chats = USER_INFO.lock().await;
 
     let chat = chats.entry(msg.chat.id).or_default();

@@ -24,7 +24,7 @@ spec:
         - name: regcred
       containers:
         - name: petuh
-          image: vladasz/petuh:0.10.3
+          image: vladasz/petuh:0.11.0
 
 #  kubectl scale deployment petuh --replicas=0 -n petuh
 

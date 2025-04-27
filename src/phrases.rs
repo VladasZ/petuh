@@ -1,3 +1,7 @@
+use anyhow::Result;
+use anyhow::anyhow;
+use rand::prelude::SliceRandom;
+
 pub const POSITIVE: &[&str] = &[
     "богачь",
     "кароль",
@@ -20,8 +24,6 @@ pub const NEGATIVE: &[&str] = &[
     "хуесос",
     "ашаурак",
     "идиотина",
-    "червь",
-    "грязь",
     "тупица",
     "затупок",
     "душнила",
@@ -48,3 +50,10 @@ pub const NEGATIVE_EMOJIS: &[&str] = &[
     "🤒", // больной
     "💀", // умер
 ];
+
+pub fn negative_word() -> Result<String> {
+    NEGATIVE
+        .choose(&mut rand::thread_rng())
+        .ok_or(anyhow!("random"))
+        .map(|s| s.to_string())
+}

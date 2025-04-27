@@ -3,7 +3,7 @@ mod phrases;
 mod yayko;
 
 use crate::chat_gpt::{query_denis, query_petuh, query_zul};
-use crate::yayko::{yayko_command, yayko_stats, yayko_strike};
+use crate::yayko::yayko_strike;
 use anyhow::Result;
 use fake::Fake;
 use rand::prelude::SliceRandom;
@@ -43,10 +43,6 @@ enum Command {
     Kub,
     #[command(description = "Разъебать.")]
     Rz,
-    #[command(description = "Узнать количество яиц.")]
-    Yayko,
-    #[command(description = "Ститистика курятника.")]
-    Stat,
     Vladik,
 }
 
@@ -125,12 +121,6 @@ async fn handle_command(bot: Bot, msg: Message, cmd: Command) -> ResponseResult<
             bot.send_sticker(msg.chat.id,  InputFile::file_id(
                 "CAACAgIAAyEFAASIlB1pAAEBYNFn_iIqy0BjM-b3xUwvtxoYkpDWgQACcGAAAmh_cUkNpnr54Lr50TYE",
             )).await?;
-        }
-        Command::Yayko => {
-            yayko_command(bot, msg).await.unwrap();
-        }
-        Command::Stat => {
-            yayko_stats(bot, msg).await.unwrap();
         }
     }
     Ok(())
