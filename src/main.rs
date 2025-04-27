@@ -51,8 +51,8 @@ enum Command {
 }
 
 const O4KO_STRENGTH: u32 = 28;
-const COMMENT_PROBABILITY: u32 = 38;
-const REACTION_PROBABILITY: u32 = 16;
+const COMMENT_PROBABILITY: u32 = 50;
+const REACTION_PROBABILITY: u32 = 20;
 
 async fn handle_command(bot: Bot, msg: Message, cmd: Command) -> ResponseResult<()> {
     dbg!(&msg);
