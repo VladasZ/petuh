@@ -123,6 +123,30 @@ async fn handle_command(bot: Bot, msg: Message, cmd: Command) -> ResponseResult<
             bot.send_sticker(msg.chat.id,  InputFile::file_id(
                 "CAACAgIAAyEFAASIlB1pAAEBYNFn_iIqy0BjM-b3xUwvtxoYkpDWgQACcGAAAmh_cUkNpnr54Lr50TYE",
             )).await?;
+
+            bot.send_animation(
+                msg.chat.id,
+                InputFile::file_id(
+                    "CgACAgIAAyEFAASIlB1pAAEBeSBoHgSeyVZW8QWT4g-O5z4urDL1QwACqXIAAj-O8EidWMzkpLfNWDYE",
+                ),
+            )
+                .await?;
+
+            bot.send_animation(
+                msg.chat.id,
+                InputFile::file_id(
+                    "CgACAgIAAyEFAASIlB1pAAEBeR5oHgP87elHbOfzEmHL6OS6Ehs6NwAC-moAAnfz8EjrSFgCXzoEujYE",
+                ),
+            )
+                .await?;
+
+            bot.send_animation(
+                msg.chat.id,
+                InputFile::file_id(
+                    "CgACAgIAAyEFAASIlB1pAAEBeR1oHgNpLi9JjdvGyQYi58R1K5SKowAC9GoAAnfz8EgtCn1BYGHvhTYE",
+                ),
+            )
+                .await?;
         }
         Command::D => {
             bot.send_sticker(
