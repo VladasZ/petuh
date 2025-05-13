@@ -17,7 +17,11 @@ if [[ "$OS" == "Linux" && "$ARCH" == "x86_64" ]]; then
     docker push "$IMAGE_NAME"
 else
     echo "Cross-building with docker buildx..."
-    docker buildx create --use || true
+    BUILDER_NAME="petuh_builder"
+
+    docker buildx create --name "$BUILDER_NAME" --use
     docker buildx inspect --bootstrap
     docker buildx build --platform linux/amd64 -t "$IMAGE_NAME" --push .
+
+    docker buildx rm "$BUILDER_NAME"
 fi
