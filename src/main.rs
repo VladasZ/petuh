@@ -35,6 +35,8 @@ enum Command {
     R,
     #[command(description = "Уважение Владику.")]
     V,
+    #[command(description = "Уважение Денису.")]
+    D,
     #[command(description = "Доброе утро.")]
     Gm,
     #[command(description = "Узнать кто петух.")]
@@ -121,6 +123,23 @@ async fn handle_command(bot: Bot, msg: Message, cmd: Command) -> ResponseResult<
             bot.send_sticker(msg.chat.id,  InputFile::file_id(
                 "CAACAgIAAyEFAASIlB1pAAEBYNFn_iIqy0BjM-b3xUwvtxoYkpDWgQACcGAAAmh_cUkNpnr54Lr50TYE",
             )).await?;
+        }
+        Command::D => {
+            bot.send_sticker(
+                msg.chat.id,
+                InputFile::file_id(
+                    "CAACAgIAAx0CctKdnAACsWBoGLtHnaEy0-Qy8rC0lMUmA520CwACUWMAAhH3wUqv_Bq7iSTS3jYE",
+                ),
+            )
+            .await?;
+
+            bot.send_sticker(msg.chat.id,  InputFile::file_id(
+                "CAACAgIAAyEFAASIlB1pAAEBYNFn_iIqy0BjM-b3xUwvtxoYkpDWgQACcGAAAmh_cUkNpnr54Lr50TYE",
+            )).await?;
+
+            bot.send_message(msg.chat.id, "в стойло подзетник").await?;
+            bot.send_message(msg.chat.id, "только и можешь что сракой их сперму ловить")
+                .await?;
         }
     }
     Ok(())

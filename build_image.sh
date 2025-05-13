@@ -4,7 +4,7 @@ set -euo pipefail
 
 ./build.py
 
-IMAGE_NAME="vladasz/petuh:0.11.0"
+IMAGE_NAME="vladasz/petuh:0.11.1"
 
 docker login
 
