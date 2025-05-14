@@ -2,7 +2,7 @@ build:
 	./build.py
 
 dock:
-	./build_image.sh
+	./build_image.py
 
 apply:
 	kubectl apply -f kubernetes
