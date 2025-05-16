@@ -11,9 +11,9 @@ use reqwest::Client;
 use serde::Deserialize;
 use teloxide::prelude::*;
 use teloxide::sugar::request::RequestReplyExt;
-use teloxide::types::InputFile;
 use teloxide::types::ParseMode;
 use teloxide::types::ReactionType;
+use teloxide::types::{InputFile, MessageId};
 use teloxide::types::{MediaKind, Message, MessageKind};
 use teloxide::utils::command::BotCommands;
 use teloxide::{ApiError, RequestError};
@@ -353,6 +353,23 @@ async fn main() -> Result<()> {
         .build()
         .dispatch()
         .await;
+
+    Ok(())
+}
+
+#[ignore]
+#[tokio::test]
+async fn debug() -> Result<()> {
+    dotenv::dotenv().ok();
+    log::info!("Starting Telegram bot...");
+
+    let bot = Bot::from_env();
+
+    let chat = bot.get_chat(ChatId(1)).await?;
+
+    dbg!(&chat);
+
+    bot.delete_message(ChatId(1), MessageId(1)).await?;
 
     Ok(())
 }
