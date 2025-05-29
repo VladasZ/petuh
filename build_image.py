@@ -4,15 +4,17 @@ import subprocess
 import platform
 import sys
 
+
 def run(cmd, check=True):
     print(f"Running: {' '.join(cmd)}")
     subprocess.run(cmd, check=check)
+
 
 def main():
     try:
         run(["./build.py"])
 
-        image_name = "vladasz/petuh:0.11.2"
+        image_name = "vladasz/petuh:0.11.3"
 
         run(["docker", "login"])
 
@@ -35,6 +37,7 @@ def main():
     except subprocess.CalledProcessError as e:
         print(f"Error during execution: {e}")
         sys.exit(1)
+
 
 if __name__ == "__main__":
     main()

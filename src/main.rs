@@ -50,6 +50,7 @@ enum Command {
 
 const O4KO_STRENGTH: u32 = 28;
 const COMMENT_PROBABILITY: u32 = 50;
+const SHUT_UP_PROBABILITY: u32 = 80;
 const REACTION_PROBABILITY: u32 = 20;
 
 async fn handle_command(bot: Bot, msg: Message, cmd: Command) -> ResponseResult<()> {
@@ -188,6 +189,19 @@ async fn handle_text(bot: Bot, msg: Message) -> ResponseResult<()> {
         reaction.send().await?;
     }
 
+    if (0..SHUT_UP_PROBABILITY).fake::<u32>() == 5 {
+        bot.send_sticker(
+            msg.chat.id,
+            InputFile::file_id(
+                "CAACAgIAAxkBAAIRX2g4zKi0qtqmsZX-QPKaN-p0czM2AAJZeAACbdzISWfvVJ7Ij4tfNgQ",
+            ),
+        )
+        .reply_to(msg.id)
+        .await?;
+
+        return Ok(());
+    }
+
     if (0..COMMENT_PROBABILITY).fake::<u32>() == 5 {
         bot.send_animation(
             msg.chat.id,
@@ -291,8 +305,6 @@ async fn handle_text(bot: Bot, msg: Message) -> ResponseResult<()> {
                 format!(
                     r"
 Курятник v{APP_VERSION}
-
-Всех с пасхой пятухи!
 
 Вероятность комментария: {COMMENT_PROBABILITY}
 Вероятность реакции: {REACTION_PROBABILITY}
