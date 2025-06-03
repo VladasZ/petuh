@@ -1,5 +1,4 @@
-use anyhow::Result;
-use anyhow::anyhow;
+use anyhow::{Result, anyhow};
 use rand::prelude::SliceRandom;
 
 pub const POSITIVE: &[&str] = &[
@@ -30,8 +29,7 @@ pub const NEGATIVE: &[&str] = &[
 ];
 
 pub const POSITIVE_EMOJIS: &[&str] = &[
-    "👍", "🔥", "💖", "✨", "💪", "🎉", "🥳", "🌟", "❤️", "👏", "👑", "🫶", "🕺", "💃", "🚀", "🥇",
-    "🥳",
+    "👍", "🔥", "💖", "✨", "💪", "🎉", "🥳", "🌟", "❤️", "👏", "👑", "🫶", "🕺", "💃", "🚀", "🥇", "🥳",
 ];
 
 pub const NEGATIVE_EMOJIS: &[&str] = &[

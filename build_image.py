@@ -14,9 +14,8 @@ def main():
     try:
         run("./build.py")
 
-        image_name = "vladasz/petuh:0.11.3"
-
-        run("docker login")
+        local_registry = "192.168.0.201:30500"
+        image_name = f"{local_registry}/petuh:0.11.5"
 
         arch = platform.machine()
         os_name = platform.system()

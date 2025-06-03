@@ -1,22 +1,27 @@
+#![allow(unreachable_code)]
+
 mod chat_gpt;
 mod phrases;
 mod yayko;
 
-use crate::chat_gpt::{query_denis, query_petuh, query_zul};
-use crate::yayko::yayko_strike;
 use anyhow::Result;
 use fake::Fake;
 use rand::prelude::SliceRandom;
 use reqwest::Client;
 use serde::Deserialize;
-use teloxide::prelude::*;
-use teloxide::sugar::request::RequestReplyExt;
-use teloxide::types::ParseMode;
-use teloxide::types::ReactionType;
-use teloxide::types::{InputFile, MessageId};
-use teloxide::types::{MediaKind, Message, MessageKind};
-use teloxide::utils::command::BotCommands;
-use teloxide::{ApiError, RequestError};
+use teloxide::{
+    ApiError, RequestError,
+    prelude::*,
+    sugar::request::RequestReplyExt,
+    types::{InputFile, MediaKind, Message, MessageKind, ParseMode, ReactionType},
+    utils::command::BotCommands,
+};
+use whoami::fallible;
+
+use crate::{
+    chat_gpt::{query_denis, query_petuh, query_zul},
+    yayko::yayko_strike,
+};
 
 pub const APP_VERSION: &str = env!("CARGO_PKG_VERSION");
 
@@ -70,8 +75,7 @@ async fn handle_command(bot: Bot, msg: Message, cmd: Command) -> ResponseResult<
 
     match cmd {
         Command::Help => {
-            bot.send_message(msg.chat.id, Command::descriptions().to_string())
-                .await?;
+            bot.send_message(msg.chat.id, Command::descriptions().to_string()).await?;
         }
         Command::K => {
             bot.send_message(
@@ -81,16 +85,13 @@ async fn handle_command(bot: Bot, msg: Message, cmd: Command) -> ResponseResult<
             .await?;
         }
         Command::M => {
-            bot.send_message(msg.chat.id, "Максим Пятушара!!!! 🐓🐓🐓🐓🐓")
-                .await?;
+            bot.send_message(msg.chat.id, "Максим Пятушара!!!! 🐓🐓🐓🐓🐓").await?;
         }
         Command::R => {
-            bot.send_message(msg.chat.id, "Рома каблук петушиный 👠")
-                .await?;
+            bot.send_message(msg.chat.id, "Рома каблук петушиный 👠").await?;
         }
         Command::Gm => {
-            bot.send_message(msg.chat.id, "Доброе утро петушары ебаные! 🐓")
-                .await?;
+            bot.send_message(msg.chat.id, "Доброе утро петушары ебаные! 🐓").await?;
         }
         Command::Kto => {
             let name = PETUHI.choose(&mut rand::thread_rng()).unwrap();
@@ -103,8 +104,12 @@ async fn handle_command(bot: Bot, msg: Message, cmd: Command) -> ResponseResult<
         Command::Rz => {
             bot.send_animation(
                 msg.chat.id,
-                InputFile::file_id("CgACAgIAAyEFAASIlB1pAAEBW3Jn95C0FYLjR1ttXMGad8DtIkPSIQACSVgAAtq2yUpGoSZCA0YzmjYE"),
-            ).reply_to(msg.id).await?;
+                InputFile::file_id(
+                    "CgACAgIAAyEFAASIlB1pAAEBW3Jn95C0FYLjR1ttXMGad8DtIkPSIQACSVgAAtq2yUpGoSZCA0YzmjYE",
+                ),
+            )
+            .reply_to(msg.id)
+            .await?;
         }
         Command::Vladik => {
             let user_id = 1302643454; // Replace with actual user ID
@@ -113,17 +118,18 @@ async fn handle_command(bot: Bot, msg: Message, cmd: Command) -> ResponseResult<
                 user_id
             );
 
-            bot.send_message(msg.chat.id, message)
-                .parse_mode(ParseMode::Html)
-                .await?;
+            bot.send_message(msg.chat.id, message).parse_mode(ParseMode::Html).await?;
         }
         Command::V => {
-            bot.send_message(msg.chat.id, "@blvcklawyer !! Ты че ахуел??!!!")
-                .await?;
+            bot.send_message(msg.chat.id, "@blvcklawyer !! Ты че ахуел??!!!").await?;
 
-            bot.send_sticker(msg.chat.id,  InputFile::file_id(
-                "CAACAgIAAyEFAASIlB1pAAEBYNFn_iIqy0BjM-b3xUwvtxoYkpDWgQACcGAAAmh_cUkNpnr54Lr50TYE",
-            )).await?;
+            bot.send_sticker(
+                msg.chat.id,
+                InputFile::file_id(
+                    "CAACAgIAAyEFAASIlB1pAAEBYNFn_iIqy0BjM-b3xUwvtxoYkpDWgQACcGAAAmh_cUkNpnr54Lr50TYE",
+                ),
+            )
+            .await?;
 
             bot.send_animation(
                 msg.chat.id,
@@ -131,7 +137,7 @@ async fn handle_command(bot: Bot, msg: Message, cmd: Command) -> ResponseResult<
                     "CgACAgIAAyEFAASIlB1pAAEBeSBoHgSeyVZW8QWT4g-O5z4urDL1QwACqXIAAj-O8EidWMzkpLfNWDYE",
                 ),
             )
-                .await?;
+            .await?;
 
             bot.send_animation(
                 msg.chat.id,
@@ -139,7 +145,7 @@ async fn handle_command(bot: Bot, msg: Message, cmd: Command) -> ResponseResult<
                     "CgACAgIAAyEFAASIlB1pAAEBeR5oHgP87elHbOfzEmHL6OS6Ehs6NwAC-moAAnfz8EjrSFgCXzoEujYE",
                 ),
             )
-                .await?;
+            .await?;
 
             bot.send_animation(
                 msg.chat.id,
@@ -147,7 +153,7 @@ async fn handle_command(bot: Bot, msg: Message, cmd: Command) -> ResponseResult<
                     "CgACAgIAAyEFAASIlB1pAAEBeR1oHgNpLi9JjdvGyQYi58R1K5SKowAC9GoAAnfz8EgtCn1BYGHvhTYE",
                 ),
             )
-                .await?;
+            .await?;
         }
         Command::D => {
             bot.send_sticker(
@@ -158,9 +164,13 @@ async fn handle_command(bot: Bot, msg: Message, cmd: Command) -> ResponseResult<
             )
             .await?;
 
-            bot.send_sticker(msg.chat.id,  InputFile::file_id(
-                "CAACAgIAAyEFAASIlB1pAAEBYNFn_iIqy0BjM-b3xUwvtxoYkpDWgQACcGAAAmh_cUkNpnr54Lr50TYE",
-            )).await?;
+            bot.send_sticker(
+                msg.chat.id,
+                InputFile::file_id(
+                    "CAACAgIAAyEFAASIlB1pAAEBYNFn_iIqy0BjM-b3xUwvtxoYkpDWgQACcGAAAmh_cUkNpnr54Lr50TYE",
+                ),
+            )
+            .await?;
 
             bot.send_message(msg.chat.id, "в стойло подзетник").await?;
             bot.send_message(msg.chat.id, "только и можешь что сракой их сперму ловить")
@@ -178,7 +188,12 @@ async fn handle_text(bot: Bot, msg: Message) -> ResponseResult<()> {
 
         const REACTIONS: &[&str] = &["🤡", "🔥", "💯"];
 
-        // "👍", "👎", "❤", "🔥", "🥰", "👏", "😁", "🤔", "🤯", "😱", "🤬", "😢", "🎉", "🤩", "🤮", "💩", "🙏", "👌", "🕊", "🤡", "🥱", "🥴", "😍", "🐳", "❤‍🔥", "🌚", "🌭", "💯", "🤣", "⚡", "🍌", "🏆", "💔", "🤨", "😐", "🍓", "🍾", "💋", "🖕", "😈", "😴", "😭", "🤓", "👻", "👨‍💻", "👀", "🎃", "🙈", "😇", "😨", "🤝", "✍", "🤗", "🫡", "🎅", "🎄", "☃", "💅", "🤪", "🗿", "🆒", "💘", "🙉", "🦄", "😘", "💊", "🙊", "😎", "👾", "🤷‍♂", "🤷", "🤷‍♀", "😡"
+        // "👍", "👎", "❤", "🔥", "🥰", "👏", "😁", "🤔", "🤯", "😱", "🤬", "😢", "🎉",
+        // "🤩", "🤮", "💩", "🙏", "👌", "🕊", "🤡", "🥱", "🥴", "😍", "🐳", "❤‍🔥", "🌚",
+        // "🌭", "💯", "🤣", "⚡", "🍌", "🏆", "💔", "🤨", "😐", "🍓", "🍾", "💋", "🖕",
+        // "😈", "😴", "😭", "🤓", "👻", "👨‍💻", "👀", "🎃", "🙈", "😇", "😨", "🤝", "✍",
+        // "🤗", "🫡", "🎅", "🎄", "☃", "💅", "🤪", "🗿", "🆒", "💘", "🙉", "🦄", "😘",
+        // "💊", "🙊", "😎", "👾", "🤷‍♂", "🤷", "🤷‍♀", "😡"
 
         let emoji = REACTIONS.choose(&mut rand::thread_rng()).unwrap();
 
@@ -192,9 +207,7 @@ async fn handle_text(bot: Bot, msg: Message) -> ResponseResult<()> {
     if (0..SHUT_UP_PROBABILITY).fake::<u32>() == 5 {
         bot.send_sticker(
             msg.chat.id,
-            InputFile::file_id(
-                "CAACAgIAAxkBAAIRX2g4zKi0qtqmsZX-QPKaN-p0czM2AAJZeAACbdzISWfvVJ7Ij4tfNgQ",
-            ),
+            InputFile::file_id("CAACAgIAAxkBAAIRX2g4zKi0qtqmsZX-QPKaN-p0czM2AAJZeAACbdzISWfvVJ7Ij4tfNgQ"),
         )
         .reply_to(msg.id)
         .await?;
@@ -218,8 +231,7 @@ async fn handle_text(bot: Bot, msg: Message) -> ResponseResult<()> {
         MessageKind::Common(ref common_message) => match &common_message.media_kind {
             MediaKind::Sticker(sticker) => {
                 if sticker.sticker.file.unique_id == "AgADl14AAqISEEs" {
-                    bot.send_message(msg.chat.id, "@maxon8871 !! Ну ты и петух!!!")
-                        .await?;
+                    bot.send_message(msg.chat.id, "@maxon8871 !! Ну ты и петух!!!").await?;
                 }
             }
             _ => (),
@@ -233,8 +245,12 @@ async fn handle_text(bot: Bot, msg: Message) -> ResponseResult<()> {
         if text.contains("я тупой пятух") {
             bot.send_animation(
                 msg.chat.id,
-                InputFile::file_id("CgACAgQAAyEFAASIlB1pAAEBWKZn9kmLfI2kj6gd4nMKqouqoDMW1gACowIAAij8FFPkdVtUyi5cBTYE"),
-            ).reply_to(msg.id).await?;
+                InputFile::file_id(
+                    "CgACAgQAAyEFAASIlB1pAAEBWKZn9kmLfI2kj6gd4nMKqouqoDMW1gACowIAAij8FFPkdVtUyi5cBTYE",
+                ),
+            )
+            .reply_to(msg.id)
+            .await?;
 
             return Ok(());
         }
@@ -246,8 +262,7 @@ async fn handle_text(bot: Bot, msg: Message) -> ResponseResult<()> {
             });
 
             if let Err(err) = result {
-                bot.send_message(msg.chat.id, format!("Я обосрался: {:?}", err))
-                    .await?;
+                bot.send_message(msg.chat.id, format!("Я обосрался: {:?}", err)).await?;
             }
 
             return Ok(());
@@ -263,7 +278,16 @@ async fn handle_text(bot: Bot, msg: Message) -> ResponseResult<()> {
             .await?;
 
             if (0..O4KO_STRENGTH).fake::<u32>() == 5 {
-                bot.send_message(msg.chat.id, query_denis(&"напиши сообщение как будто у тебя сгорела жопа и ты уходишь из чата и плевал на всех его участников").await.unwrap()).await?;
+                bot.send_message(
+                    msg.chat.id,
+                    query_denis(
+                        &"напиши сообщение как будто у тебя сгорела жопа и ты уходишь из чата и плевал на \
+                          всех его участников",
+                    )
+                    .await
+                    .unwrap(),
+                )
+                .await?;
                 bot.leave_chat(msg.chat.id).await?;
             }
 
@@ -285,14 +309,20 @@ async fn handle_text(bot: Bot, msg: Message) -> ResponseResult<()> {
         if text.starts_with("зул, ") {
             let text = &text["зул, ".len()..];
 
-            bot.send_message(
-                msg.chat.id,
-                format!("Зул:\n{}", query_zul(&text).await.unwrap()),
-            )
-            .await?;
+            bot.send_message(msg.chat.id, format!("Зул:\n{}", query_zul(&text).await.unwrap()))
+                .await?;
 
             if (0..O4KO_STRENGTH).fake::<u32>() == 5 {
-                bot.send_message(msg.chat.id, query_zul(&"напиши сообщение как будто у тебя сгорела жопа и ты уходишь из чата и плевал на всех его участников").await.unwrap()).await?;
+                bot.send_message(
+                    msg.chat.id,
+                    query_zul(
+                        &"напиши сообщение как будто у тебя сгорела жопа и ты уходишь из чата и плевал на \
+                          всех его участников",
+                    )
+                    .await
+                    .unwrap(),
+                )
+                .await?;
                 bot.leave_chat(msg.chat.id).await?;
             }
 
@@ -319,6 +349,8 @@ async fn handle_text(bot: Bot, msg: Message) -> ResponseResult<()> {
 
 Кручусь тут:
 {}
+
+(Владик Пятушара Ванючы)
 ",
                     PETUHI.join("\n"),
                     collect_system_info()
@@ -353,11 +385,7 @@ async fn main() -> Result<()> {
     let bot = Bot::from_env();
 
     let handler = dptree::entry()
-        .branch(
-            Update::filter_message()
-                .filter_command::<Command>()
-                .endpoint(handle_command),
-        )
+        .branch(Update::filter_message().filter_command::<Command>().endpoint(handle_command))
         .branch(Update::filter_message().endpoint(handle_text));
 
     Dispatcher::builder(bot, handler)
@@ -389,8 +417,8 @@ async fn debug() -> Result<()> {
 #[derive(Debug, Deserialize)]
 struct WeatherResponse {
     weather: Vec<Weather>,
-    main: Main,
-    name: String,
+    main:    Main,
+    name:    String,
 }
 
 #[derive(Debug, Deserialize)]
@@ -430,9 +458,7 @@ async fn get_weather(query: &str) -> Result<String> {
         let reply = format!(
             "В городе {} петушиная погода: {}, {:.1}°C",
             data.name,
-            data.weather
-                .first()
-                .map_or("неизвестна", |w| w.description.as_str()),
+            data.weather.first().map_or("неизвестна", |w| w.description.as_str()),
             data.main.temp
         );
 
@@ -462,7 +488,7 @@ fn collect_system_info() -> String {
     //     info += &format!("OS Release: {}\n", os_release);
     // }
 
-    let hostname = whoami::hostname();
+    let hostname = fallible::hostname().unwrap();
     info += &format!("Hostname: {}\n", hostname);
 
     if let Ok(uname) = uname::uname() {
