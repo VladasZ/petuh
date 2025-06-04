@@ -12,3 +12,6 @@ logs:
 
 stop:
 	kubectl delete deployment petuh -n petuh
+
+tags:
+	curl http://192.168.0.201:30500/v2/petuh/tags/list
