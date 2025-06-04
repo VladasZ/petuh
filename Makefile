@@ -1,8 +1,5 @@
-build:
-	./build.py
 
-dock:
-	./build_image.py
+include build/common.mk
 
 apply:
 	kubectl apply -f kubernetes
@@ -12,9 +9,6 @@ pods:
 
 logs:
 	kubectl logs -n petuh -l app=petuh --tail=100
-
-pr:
-	gh pr create --fill
 
 stop:
 	kubectl delete deployment petuh -n petuh
