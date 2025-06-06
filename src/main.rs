@@ -40,6 +40,8 @@ enum Command {
     R,
     #[command(description = "Уважение Владику.")]
     V,
+    #[command(description = "Уважение Владасу.")]
+    VS,
     #[command(description = "Уважение Денису.")]
     D,
     #[command(description = "Доброе утро.")]
@@ -175,6 +177,9 @@ async fn handle_command(bot: Bot, msg: Message, cmd: Command) -> ResponseResult<
             bot.send_message(msg.chat.id, "в стойло подзетник").await?;
             bot.send_message(msg.chat.id, "только и можешь что сракой их сперму ловить")
                 .await?;
+        }
+        Command::VS => {
+            bot.send_message(msg.chat.id, "Владас петух сцаный 🐓").await?;
         }
     }
     Ok(())
@@ -417,8 +422,8 @@ async fn debug() -> Result<()> {
 #[derive(Debug, Deserialize)]
 struct WeatherResponse {
     weather: Vec<Weather>,
-    main:    Main,
-    name:    String,
+    main: Main,
+    name: String,
 }
 
 #[derive(Debug, Deserialize)]
