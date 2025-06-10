@@ -15,3 +15,7 @@ stop:
 
 tags:
 	curl http://192.168.0.201:30500/v2/petuh/tags/list
+
+deploy:
+    make dock
+    make apply

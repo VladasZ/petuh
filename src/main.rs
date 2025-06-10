@@ -25,7 +25,7 @@ use crate::{
 
 pub const APP_VERSION: &str = env!("CARGO_PKG_VERSION");
 
-const PETUHI: &[&str] = &["Максим", "Владик", "Владас", "Рома", "Настя", "Денис"];
+const PETUHI: &[&str] = &["Максим", "Владик", "Владас", "Рома", "Настя", "Денис", "Алёна", "Витёк"];
 
 #[derive(BotCommands, Clone)]
 #[command(rename_rule = "lowercase", description = r"🐓 Петушиные команды:")]
@@ -42,6 +42,8 @@ enum Command {
     V,
     #[command(description = "Уважение Владасу.")]
     VS,
+    #[command(description = "Уважение Насте.")]
+    N,
     #[command(description = "Уважение Денису.")]
     D,
     #[command(description = "Доброе утро.")]
@@ -180,6 +182,9 @@ async fn handle_command(bot: Bot, msg: Message, cmd: Command) -> ResponseResult<
         }
         Command::VS => {
             bot.send_message(msg.chat.id, "Владас петух сцаный 🐓").await?;
+        }
+        Command::N => {
+            bot.send_message(msg.chat.id, "Настя пятух 🐓").await?;
         }
     }
     Ok(())
