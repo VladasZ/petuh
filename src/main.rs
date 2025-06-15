@@ -239,6 +239,12 @@ async fn handle_command(bot: Bot, msg: Message, cmd: Command) -> ResponseResult<
         }
         Command::A => {
             bot.send_message(msg.chat.id, "Алена пятух !!! 🐓🐓🐓🐓🐓🐓🐓🐓🐓🐓🐓").await?;
+            bot.send_animation(
+                msg.chat.id,
+                InputFile::file_id("CgACAgIAAxkBAAIXDWhJOHImiHv4j1Q5TorZFGdfqUw7AAJ7ggACgXBJSgM0dD0qhhVZNgQ"),
+            )
+            .await?;
+            bot.send_message(msg.chat.id, "Слушай, Алена. Пора тебе валить обратно в свой курятник. Там твои петушары ждут. Чего ты тут мотаешься? Занимайся своими делами.").await?;
         }
     }
     Ok(())
