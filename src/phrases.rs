@@ -1,5 +1,5 @@
 use anyhow::{Result, anyhow};
-use rand::prelude::SliceRandom;
+use rand::prelude::IndexedRandom;
 
 pub const POSITIVE: &[&str] = &[
     "богачь",
@@ -51,7 +51,7 @@ pub const NEGATIVE_EMOJIS: &[&str] = &[
 
 pub fn negative_word() -> Result<String> {
     NEGATIVE
-        .choose(&mut rand::thread_rng())
+        .choose(&mut rand::rng())
         .ok_or(anyhow!("random"))
         .map(|s| s.to_string())
 }

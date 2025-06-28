@@ -1,12 +1,12 @@
 #![allow(unreachable_code)]
 
+use rand::prelude::IndexedRandom;
 mod chat_gpt;
 mod phrases;
 mod yayko;
 
 use anyhow::Result;
 use fake::Fake;
-use rand::prelude::SliceRandom;
 use reqwest::Client;
 use serde::Deserialize;
 use teloxide::{
@@ -35,7 +35,7 @@ const PETUHI: &[&str] = &[
     "Алёна",
     "Витёк",
 ];
-const MORNING: &[&str] = &[
+const _MORNING: &[&str] = &[
     "Доброе утро петушары ебаные! 🐓",
     "День начался, а вы, блядь, всё ещё в своих обоссанных курятниках лежите! 🛏️🐓",
     "Вставайте, кукарекающие позорища, вас уже ждут дела — нихуя не важные! 📅🖕",
@@ -118,7 +118,7 @@ async fn handle_command(bot: Bot, msg: Message, cmd: Command) -> ResponseResult<
         bot.send_animation(
             msg.chat.id,
             InputFile::file_id(
-                "CgACAgIAAyEFAASIlB1pAAEBW3Jn95C0FYLjR1ttXMGad8DtIkPSIQACSVgAAtq2yUpGoSZCA0YzmjYE",
+                "CgACAgIAAyEFAASIlB1pAAEBW3Jn95C0FYLjR1ttXMGad8DtIkPSIQACSVgAAtq2yUpGoSZCA0YzmjYE".into(),
             ),
         )
         .reply_to(msg.id)
@@ -144,12 +144,18 @@ async fn handle_command(bot: Bot, msg: Message, cmd: Command) -> ResponseResult<
             bot.send_message(msg.chat.id, "Рома каблук петушиный 👠").await?;
         }
         Command::Gm => {
-            let morning = MORNING.choose(&mut rand::thread_rng()).unwrap();
+            let morning = query_zul(
+                "Зул, напиши очень доброе поздравление с добрым утром, с теплом и позитивом, пожелай всем \
+                 участникам чата хорошего дня. Добавь эмодзи разных цветов сердечек и петухов. Но все равно \
+                 под конец скажи что нибудь немного оскорбительное.",
+            )
+            .await
+            .expect("Failed to gm");
 
-            bot.send_message(msg.chat.id, *morning).await?;
+            bot.send_message(msg.chat.id, morning).await?;
         }
         Command::Kto => {
-            let name = PETUHI.choose(&mut rand::thread_rng()).unwrap();
+            let name = PETUHI.choose(&mut rand::rng()).unwrap();
             let reply = format!("{name} — петух! 🐓");
             bot.send_message(msg.chat.id, reply).await?;
         }
@@ -160,7 +166,7 @@ async fn handle_command(bot: Bot, msg: Message, cmd: Command) -> ResponseResult<
             bot.send_animation(
                 msg.chat.id,
                 InputFile::file_id(
-                    "CgACAgIAAyEFAASIlB1pAAEBW3Jn95C0FYLjR1ttXMGad8DtIkPSIQACSVgAAtq2yUpGoSZCA0YzmjYE",
+                    "CgACAgIAAyEFAASIlB1pAAEBW3Jn95C0FYLjR1ttXMGad8DtIkPSIQACSVgAAtq2yUpGoSZCA0YzmjYE".into(),
                 ),
             )
             .reply_to(msg.id)
@@ -181,7 +187,7 @@ async fn handle_command(bot: Bot, msg: Message, cmd: Command) -> ResponseResult<
             bot.send_sticker(
                 msg.chat.id,
                 InputFile::file_id(
-                    "CAACAgIAAyEFAASIlB1pAAEBYNFn_iIqy0BjM-b3xUwvtxoYkpDWgQACcGAAAmh_cUkNpnr54Lr50TYE",
+                    "CAACAgIAAyEFAASIlB1pAAEBYNFn_iIqy0BjM-b3xUwvtxoYkpDWgQACcGAAAmh_cUkNpnr54Lr50TYE".into(),
                 ),
             )
             .await?;
@@ -189,7 +195,7 @@ async fn handle_command(bot: Bot, msg: Message, cmd: Command) -> ResponseResult<
             bot.send_animation(
                 msg.chat.id,
                 InputFile::file_id(
-                    "CgACAgIAAyEFAASIlB1pAAEBeSBoHgSeyVZW8QWT4g-O5z4urDL1QwACqXIAAj-O8EidWMzkpLfNWDYE",
+                    "CgACAgIAAyEFAASIlB1pAAEBeSBoHgSeyVZW8QWT4g-O5z4urDL1QwACqXIAAj-O8EidWMzkpLfNWDYE".into(),
                 ),
             )
             .await?;
@@ -197,7 +203,7 @@ async fn handle_command(bot: Bot, msg: Message, cmd: Command) -> ResponseResult<
             bot.send_animation(
                 msg.chat.id,
                 InputFile::file_id(
-                    "CgACAgIAAyEFAASIlB1pAAEBeR5oHgP87elHbOfzEmHL6OS6Ehs6NwAC-moAAnfz8EjrSFgCXzoEujYE",
+                    "CgACAgIAAyEFAASIlB1pAAEBeR5oHgP87elHbOfzEmHL6OS6Ehs6NwAC-moAAnfz8EjrSFgCXzoEujYE".into(),
                 ),
             )
             .await?;
@@ -205,7 +211,7 @@ async fn handle_command(bot: Bot, msg: Message, cmd: Command) -> ResponseResult<
             bot.send_animation(
                 msg.chat.id,
                 InputFile::file_id(
-                    "CgACAgIAAyEFAASIlB1pAAEBeR1oHgNpLi9JjdvGyQYi58R1K5SKowAC9GoAAnfz8EgtCn1BYGHvhTYE",
+                    "CgACAgIAAyEFAASIlB1pAAEBeR1oHgNpLi9JjdvGyQYi58R1K5SKowAC9GoAAnfz8EgtCn1BYGHvhTYE".into(),
                 ),
             )
             .await?;
@@ -214,7 +220,7 @@ async fn handle_command(bot: Bot, msg: Message, cmd: Command) -> ResponseResult<
             bot.send_sticker(
                 msg.chat.id,
                 InputFile::file_id(
-                    "CAACAgIAAx0CctKdnAACsWBoGLtHnaEy0-Qy8rC0lMUmA520CwACUWMAAhH3wUqv_Bq7iSTS3jYE",
+                    "CAACAgIAAx0CctKdnAACsWBoGLtHnaEy0-Qy8rC0lMUmA520CwACUWMAAhH3wUqv_Bq7iSTS3jYE".into(),
                 ),
             )
             .await?;
@@ -222,7 +228,7 @@ async fn handle_command(bot: Bot, msg: Message, cmd: Command) -> ResponseResult<
             bot.send_sticker(
                 msg.chat.id,
                 InputFile::file_id(
-                    "CAACAgIAAyEFAASIlB1pAAEBYNFn_iIqy0BjM-b3xUwvtxoYkpDWgQACcGAAAmh_cUkNpnr54Lr50TYE",
+                    "CAACAgIAAyEFAASIlB1pAAEBYNFn_iIqy0BjM-b3xUwvtxoYkpDWgQACcGAAAmh_cUkNpnr54Lr50TYE".into(),
                 ),
             )
             .await?;
@@ -241,10 +247,17 @@ async fn handle_command(bot: Bot, msg: Message, cmd: Command) -> ResponseResult<
             bot.send_message(msg.chat.id, "Алена пятух !!! 🐓🐓🐓🐓🐓🐓🐓🐓🐓🐓🐓").await?;
             bot.send_animation(
                 msg.chat.id,
-                InputFile::file_id("CgACAgIAAxkBAAIXDWhJOHImiHv4j1Q5TorZFGdfqUw7AAJ7ggACgXBJSgM0dD0qhhVZNgQ"),
+                InputFile::file_id(
+                    "CgACAgIAAxkBAAIXDWhJOHImiHv4j1Q5TorZFGdfqUw7AAJ7ggACgXBJSgM0dD0qhhVZNgQ".into(),
+                ),
             )
             .await?;
-            bot.send_message(msg.chat.id, "Слушай, Алена. Пора тебе валить обратно в свой курятник. Там твои петушары ждут. Чего ты тут мотаешься? Занимайся своими делами.").await?;
+            bot.send_message(
+                msg.chat.id,
+                "Слушай, Алена. Пора тебе валить обратно в свой курятник. Там твои петушары ждут. Чего ты \
+                 тут мотаешься? Занимайся своими делами.",
+            )
+            .await?;
         }
     }
     Ok(())
@@ -265,7 +278,7 @@ async fn handle_text(bot: Bot, msg: Message) -> ResponseResult<()> {
         // "🤗", "🫡", "🎅", "🎄", "☃", "💅", "🤪", "🗿", "🆒", "💘", "🙉", "🦄", "😘",
         // "💊", "🙊", "😎", "👾", "🤷‍♂", "🤷", "🤷‍♀", "😡"
 
-        let emoji = REACTIONS.choose(&mut rand::thread_rng()).unwrap();
+        let emoji = REACTIONS.choose(&mut rand::rng()).unwrap();
 
         reaction.reaction = Some(vec![ReactionType::Emoji {
             emoji: emoji.to_string(),
@@ -277,7 +290,9 @@ async fn handle_text(bot: Bot, msg: Message) -> ResponseResult<()> {
     if (0..SHUT_UP_PROBABILITY).fake::<u32>() == 5 {
         bot.send_sticker(
             msg.chat.id,
-            InputFile::file_id("CAACAgIAAxkBAAIRX2g4zKi0qtqmsZX-QPKaN-p0czM2AAJZeAACbdzISWfvVJ7Ij4tfNgQ"),
+            InputFile::file_id(
+                "CAACAgIAAxkBAAIRX2g4zKi0qtqmsZX-QPKaN-p0czM2AAJZeAACbdzISWfvVJ7Ij4tfNgQ".into(),
+            ),
         )
         .reply_to(msg.id)
         .await?;
@@ -289,7 +304,7 @@ async fn handle_text(bot: Bot, msg: Message) -> ResponseResult<()> {
         bot.send_animation(
             msg.chat.id,
             InputFile::file_id(
-                "CgACAgIAAyEFAASIlB1pAAEBW3Jn95C0FYLjR1ttXMGad8DtIkPSIQACSVgAAtq2yUpGoSZCA0YzmjYE",
+                "CgACAgIAAyEFAASIlB1pAAEBW3Jn95C0FYLjR1ttXMGad8DtIkPSIQACSVgAAtq2yUpGoSZCA0YzmjYE".into(),
             ),
         )
         .reply_to(msg.id)
@@ -300,7 +315,7 @@ async fn handle_text(bot: Bot, msg: Message) -> ResponseResult<()> {
     match msg.kind {
         MessageKind::Common(ref common_message) => match &common_message.media_kind {
             MediaKind::Sticker(sticker) => {
-                if sticker.sticker.file.unique_id == "AgADl14AAqISEEs" {
+                if sticker.sticker.file.unique_id == "AgADl14AAqISEEs".into() {
                     bot.send_message(msg.chat.id, "@maxon8871 !! Ну ты и петух!!!").await?;
                 }
             }
@@ -316,7 +331,7 @@ async fn handle_text(bot: Bot, msg: Message) -> ResponseResult<()> {
             bot.send_animation(
                 msg.chat.id,
                 InputFile::file_id(
-                    "CgACAgQAAyEFAASIlB1pAAEBWKZn9kmLfI2kj6gd4nMKqouqoDMW1gACowIAAij8FFPkdVtUyi5cBTYE",
+                    "CgACAgQAAyEFAASIlB1pAAEBWKZn9kmLfI2kj6gd4nMKqouqoDMW1gACowIAAij8FFPkdVtUyi5cBTYE".into(),
                 ),
             )
             .reply_to(msg.id)
@@ -435,7 +450,7 @@ async fn handle_text(bot: Bot, msg: Message) -> ResponseResult<()> {
         }
 
         if text == "Кто петух?" {
-            let name = PETUHI.choose(&mut rand::thread_rng()).unwrap();
+            let name = PETUHI.choose(&mut rand::rng()).unwrap();
             let reply = format!("{name} — петух! 🐓");
             bot.send_message(msg.chat.id, reply).await?;
         }
@@ -487,8 +502,8 @@ async fn debug() -> Result<()> {
 #[derive(Debug, Deserialize)]
 struct WeatherResponse {
     weather: Vec<Weather>,
-    main: Main,
-    name: String,
+    main:    Main,
+    name:    String,
 }
 
 #[derive(Debug, Deserialize)]

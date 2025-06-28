@@ -1,7 +1,7 @@
+use rand::prelude::IndexedRandom;
 use std::collections::BTreeMap;
 
 use anyhow::{Result, anyhow, bail};
-use rand::prelude::SliceRandom;
 use teloxide::{
     Bot,
     prelude::{Requester, UserId},
@@ -17,8 +17,8 @@ static USER_INFO: Mutex<BTreeMap<ChatId, BTreeMap<UserId, UserInfo>>> = Mutex::c
 
 #[derive(Debug, Clone)]
 struct UserInfo {
-    firstname:   String,
-    username:    Option<String>,
+    firstname: String,
+    username: Option<String>,
     yayko_count: u64,
 }
 
@@ -52,8 +52,8 @@ pub async fn _yayko_stats(bot: Bot, msg: Message) -> Result<()> {
             result.push_str(&format!(
                 "Пхахахха {} {} {} проебал уже все яйца!! Чтобы восстановить яйца напиши: я тупой пятух\n",
                 user.firstname,
-                NEGATIVE.choose(&mut rand::thread_rng()).ok_or(anyhow!("random"))?,
-                NEGATIVE_EMOJIS.choose(&mut rand::thread_rng()).ok_or(anyhow!("random"))?
+                NEGATIVE.choose(&mut rand::rng()).ok_or(anyhow!("random"))?,
+                NEGATIVE_EMOJIS.choose(&mut rand::rng()).ok_or(anyhow!("random"))?
             ));
         } else {
             result.push_str(&format!("{} у тебя: {}\n", user.firstname, user.yayko_count));
@@ -83,8 +83,8 @@ pub async fn _yayko_command(bot: Bot, msg: Message) -> Result<()> {
     let chat = chats.entry(msg.chat.id).or_default();
 
     let user = chat.entry(id).or_insert_with(|| UserInfo {
-        firstname:   from.first_name.clone(),
-        username:    from.username.clone(),
+        firstname: from.first_name.clone(),
+        username: from.username.clone(),
         yayko_count: STARTING_YAYKO,
     });
 
@@ -128,8 +128,8 @@ pub async fn yayko_strike(bot: Bot, msg: Message) -> Result<()> {
     let mut current_user = chat
         .entry(id)
         .or_insert_with(|| UserInfo {
-            firstname:   from.first_name.clone(),
-            username:    from.username.clone(),
+            firstname: from.first_name.clone(),
+            username: from.username.clone(),
             yayko_count: STARTING_YAYKO,
         })
         .clone();
@@ -144,8 +144,8 @@ pub async fn yayko_strike(bot: Bot, msg: Message) -> Result<()> {
             msg.chat.id,
             format!(
                 "Этот {} еще не зарегестрировался в игре {}!  Пусть напишет /yayko сначала.",
-                NEGATIVE.choose(&mut rand::thread_rng()).ok_or(anyhow!("random"))?,
-                NEGATIVE_EMOJIS.choose(&mut rand::thread_rng()).ok_or(anyhow!("random"))?
+                NEGATIVE.choose(&mut rand::rng()).ok_or(anyhow!("random"))?,
+                NEGATIVE_EMOJIS.choose(&mut rand::rng()).ok_or(anyhow!("random"))?
             ),
         )
         .await?;
@@ -191,19 +191,19 @@ pub async fn yayko_strike(bot: Bot, msg: Message) -> Result<()> {
 
     let win = rand::random::<bool>();
 
-    let positive = POSITIVE.choose(&mut rand::thread_rng()).ok_or(anyhow!("random"))?;
-    let negative = NEGATIVE.choose(&mut rand::thread_rng()).ok_or(anyhow!("random"))?;
+    let positive = POSITIVE.choose(&mut rand::rng()).ok_or(anyhow!("random"))?;
+    let negative = NEGATIVE.choose(&mut rand::rng()).ok_or(anyhow!("random"))?;
 
     let pos_emoji = format!(
         "{}{}",
-        POSITIVE_EMOJIS.choose(&mut rand::thread_rng()).ok_or(anyhow!("random"))?,
-        POSITIVE_EMOJIS.choose(&mut rand::thread_rng()).ok_or(anyhow!("random"))?
+        POSITIVE_EMOJIS.choose(&mut rand::rng()).ok_or(anyhow!("random"))?,
+        POSITIVE_EMOJIS.choose(&mut rand::rng()).ok_or(anyhow!("random"))?
     );
 
     let neg_emoji = format!(
         "{}{}",
-        NEGATIVE_EMOJIS.choose(&mut rand::thread_rng()).ok_or(anyhow!("random"))?,
-        NEGATIVE_EMOJIS.choose(&mut rand::thread_rng()).ok_or(anyhow!("random"))?
+        NEGATIVE_EMOJIS.choose(&mut rand::rng()).ok_or(anyhow!("random"))?,
+        NEGATIVE_EMOJIS.choose(&mut rand::rng()).ok_or(anyhow!("random"))?
     );
 
     if win {
