@@ -6,6 +6,7 @@ use crate::phrases::{NEGATIVE_ADJ, NEGATIVE_EMOJIS};
 mod chat_gpt;
 mod phrases;
 mod yayko;
+mod saved_responses;
 
 use anyhow::Result;
 use fake::Fake;

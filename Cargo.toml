@@ -19,3 +19,6 @@ tokio = { version = "1.44", features = ["macros"] }
 #sys-info = "0.9"
 uname = "0.1"
 whoami = "1.4"
+
+store = { path = "../test-engine/deps/store" }
+
