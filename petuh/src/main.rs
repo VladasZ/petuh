@@ -6,7 +6,6 @@ use crate::phrases::{NEGATIVE_ADJ, NEGATIVE_EMOJIS};
 mod chat_gpt;
 mod phrases;
 mod yayko;
-mod saved_responses;
 
 use anyhow::Result;
 use fake::Fake;
@@ -466,7 +465,7 @@ async fn debug() -> Result<()> {
 
     dbg!(&chat);
 
-    bot.delete_message(ChatId(1), MessageId(1)).await?;
+    bot.delete_message(ChatId(1), teloxide::types::MessageId(1)).await?;
 
     Ok(())
 }
@@ -567,4 +566,5 @@ fn collect_system_info() -> String {
 #[test]
 fn system_info() {
     println!("{}", &collect_system_info());
+    dbg!(APP_VERSION);
 }

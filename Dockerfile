@@ -6,10 +6,10 @@ RUN apt update && apt install -y \
     ca-certificates \
     && rm -rf /var/lib/apt/lists/*
 
-COPY target/x86_64-unknown-linux-gnu/release/glavpetuh /usr/local/bin/glavpetuh
+COPY target/x86_64-unknown-linux-gnu/release/petuh /usr/local/bin/petuh
 COPY .env /app/.env
 WORKDIR /app
 
-RUN chmod +x /usr/local/bin/glavpetuh
+RUN chmod +x /usr/local/bin/petuh
 
-ENTRYPOINT ["/usr/local/bin/glavpetuh"]
+ENTRYPOINT ["/usr/local/bin/petuh"]

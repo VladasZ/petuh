@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package petuh;
+
+enum Personality {
+  DENIS = 0;
+  ZYL = 1;
+  PETUH = 2;
+}
+
+message GenerateRequest {
+  Personality personality = 1;
+  string query = 2;
+}
+
+message GenerateResponse {
+  string response = 1;
+}
+
+service PetuhLLM {
+  rpc GenerateResponse (GenerateRequest) returns (GenerateResponse);
+}
