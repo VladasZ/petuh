@@ -1,7 +1,7 @@
-use rand::prelude::IndexedRandom;
 use std::collections::BTreeMap;
 
 use anyhow::{Result, anyhow, bail};
+use rand::prelude::IndexedRandom;
 use teloxide::{
     Bot,
     prelude::{Requester, UserId},
@@ -17,15 +17,15 @@ static USER_INFO: Mutex<BTreeMap<ChatId, BTreeMap<UserId, UserInfo>>> = Mutex::c
 
 #[derive(Debug, Clone)]
 struct UserInfo {
-    firstname: String,
-    username: Option<String>,
+    firstname:   String,
+    username:    Option<String>,
     yayko_count: u64,
 }
 
 pub async fn _yayko_stats(bot: Bot, msg: Message) -> Result<()> {
     bot.send_message(
         msg.chat.id,
-        &format!("Ты шо {}? Пасха кончилась.", negative_word()?),
+        format!("Ты шо {}? Пасха кончилась.", negative_word()?),
     )
     .await?;
 
@@ -68,7 +68,7 @@ pub async fn _yayko_stats(bot: Bot, msg: Message) -> Result<()> {
 pub async fn _yayko_command(bot: Bot, msg: Message) -> Result<()> {
     bot.send_message(
         msg.chat.id,
-        &format!("Ты шо {}? Пасха кончилась.", negative_word()?),
+        format!("Ты шо {}? Пасха кончилась.", negative_word()?),
     )
     .await?;
 
@@ -83,8 +83,8 @@ pub async fn _yayko_command(bot: Bot, msg: Message) -> Result<()> {
     let chat = chats.entry(msg.chat.id).or_default();
 
     let user = chat.entry(id).or_insert_with(|| UserInfo {
-        firstname: from.first_name.clone(),
-        username: from.username.clone(),
+        firstname:   from.first_name.clone(),
+        username:    from.username.clone(),
         yayko_count: STARTING_YAYKO,
     });
 
@@ -110,7 +110,7 @@ pub async fn _yayko_command(bot: Bot, msg: Message) -> Result<()> {
 pub async fn yayko_strike(bot: Bot, msg: Message) -> Result<()> {
     bot.send_message(
         msg.chat.id,
-        &format!("Ты шо {}? Пасха кончилась.", negative_word()?),
+        format!("Ты шо {}? Пасха кончилась.", negative_word()?),
     )
     .await?;
 
@@ -128,13 +128,13 @@ pub async fn yayko_strike(bot: Bot, msg: Message) -> Result<()> {
     let mut current_user = chat
         .entry(id)
         .or_insert_with(|| UserInfo {
-            firstname: from.first_name.clone(),
-            username: from.username.clone(),
+            firstname:   from.first_name.clone(),
+            username:    from.username.clone(),
             yayko_count: STARTING_YAYKO,
         })
         .clone();
 
-    let target_user = extract_user(&msg, &chat)?;
+    let target_user = extract_user(&msg, chat)?;
 
     dbg!(&current_user);
     dbg!(&target_user);
@@ -232,18 +232,12 @@ pub async fn yayko_strike(bot: Bot, msg: Message) -> Result<()> {
 
     chat.values_mut()
         .find(|user| dbg!(&user.firstname) == dbg!(&current_user.firstname))
-        .expect(&format!(
-            "User '{}' not found in USER_INFO",
-            current_user.firstname
-        ))
+        .unwrap_or_else(|| panic!("User '{}' not found in USER_INFO", current_user.firstname))
         .yayko_count = current_user.yayko_count;
 
     chat.values_mut()
         .find(|user| dbg!(&user.firstname) == dbg!(&target_user.firstname))
-        .expect(&format!(
-            "User '{}' not found in USER_INFO",
-            target_user.firstname
-        ))
+        .unwrap_or_else(|| panic!("User '{}' not found in USER_INFO", target_user.firstname))
         .yayko_count = target_user.yayko_count;
 
     Ok(())
@@ -260,7 +254,7 @@ fn extract_user(msg: &Message, users: &BTreeMap<UserId, UserInfo>) -> Result<Opt
 
     let text = &text_media.text;
 
-    if text.contains("@") {
+    if text.contains('@') {
         let username = dbg!(extract_username2(text)).ok_or(anyhow!("extract_username2"))?;
 
         let user = users.values().find(|user| user.username == Some(username.clone())).cloned();

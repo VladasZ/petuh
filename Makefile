@@ -19,3 +19,15 @@ tags:
 deploy:
 	make dock
 	make apply
+
+lint:
+	cargo clippy \
+      -- \
+      \
+      -W clippy::all \
+      -W clippy::pedantic \
+      \
+      -A clippy::missing_panics_doc \
+      -A clippy::format_push_string \
+      \
+      -D warnings

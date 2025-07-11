@@ -18,7 +18,6 @@ use teloxide::{
     types::{InputFile, MediaKind, Message, MessageKind, ParseMode, ReactionType},
     utils::command::BotCommands,
 };
-use whoami::fallible;
 
 use crate::{
     chat_gpt::{query_denis, query_petuh, query_zul},
@@ -62,10 +61,10 @@ enum Command {
     Vladik,
 }
 
-const O4KO_STRENGTH: u32 = 35;
-const COMMENT_PROBABILITY: u32 = 75;
-const SHUT_UP_PROBABILITY: u32 = 100;
-const REACTION_PROBABILITY: u32 = 25;
+const O4KO_STRENGTH: u32 = 40;
+const COMMENT_PROBABILITY: u32 = 80;
+const SHUT_UP_PROBABILITY: u32 = 110;
+const REACTION_PROBABILITY: u32 = 30;
 
 async fn handle_command(bot: Bot, msg: Message, cmd: Command) -> ResponseResult<()> {
     dbg!(&msg);
@@ -132,11 +131,8 @@ async fn handle_command(bot: Bot, msg: Message, cmd: Command) -> ResponseResult<
             .await?;
         }
         Command::Vladik => {
-            let user_id = 1302643454; // Replace with actual user ID
-            let message = format!(
-                "Это великий пятушара - <a href=\"tg://user?id={}\">Пятух!!!</a>!",
-                user_id
-            );
+            let user_id = 1_302_643_454;
+            let message = format!("Это великий пятушара - <a href=\"tg://user?id={user_id}\">Пятух!!!</a>!",);
 
             bot.send_message(msg.chat.id, message).parse_mode(ParseMode::Html).await?;
         }
@@ -223,24 +219,17 @@ async fn handle_command(bot: Bot, msg: Message, cmd: Command) -> ResponseResult<
 }
 
 async fn handle_text(bot: Bot, msg: Message) -> ResponseResult<()> {
+    const REACTIONS: &[&str] = &["🤡", "🔥", "💯", "💊", "🤮", "🤩", "👏", "💩"];
+
     dbg!(&msg);
 
     if (0..REACTION_PROBABILITY).fake::<u32>() == 0 {
         let mut reaction = bot.set_message_reaction(msg.chat.id, msg.id);
 
-        const REACTIONS: &[&str] = &["🤡", "🔥", "💯", "💊", "🤮", "🤩", "👏", "💩"];
-
-        // "👍", "👎", "❤", "🔥", "🥰", "👏", "😁", "🤔", "🤯", "😱", "🤬", "😢", "🎉",
-        // "🤩", "🤮", "💩", "🙏", "👌", "🕊", "🤡", "🥱", "🥴", "😍", "🐳", "❤‍🔥", "🌚",
-        // "🌭", "💯", "🤣", "⚡", "🍌", "🏆", "💔", "🤨", "😐", "🍓", "🍾", "💋", "🖕",
-        // "😈", "😴", "😭", "🤓", "👻", "👨‍💻", "👀", "🎃", "🙈", "😇", "😨", "🤝", "✍",
-        // "🤗", "🫡", "🎅", "🎄", "☃", "💅", "🤪", "🗿", "🆒", "💘", "🙉", "🦄", "😘",
-        // "💊", "🙊", "😎", "👾", "🤷‍♂", "🤷", "🤷‍♀", "😡"
-
         let emoji = REACTIONS.choose(&mut rand::rng()).unwrap();
 
         reaction.reaction = Some(vec![ReactionType::Emoji {
-            emoji: emoji.to_string(),
+            emoji: (*emoji).to_string(),
         }]);
 
         reaction.send().await?;
@@ -306,7 +295,7 @@ async fn handle_text(bot: Bot, msg: Message) -> ResponseResult<()> {
             });
 
             if let Err(err) = result {
-                bot.send_message(msg.chat.id, format!("Я обосрался: {:?}", err)).await?;
+                bot.send_message(msg.chat.id, format!("Я обосрался: {err:?}")).await?;
             }
 
             return Ok(());
@@ -317,7 +306,7 @@ async fn handle_text(bot: Bot, msg: Message) -> ResponseResult<()> {
 
             bot.send_message(
                 msg.chat.id,
-                format!("Денис:\n{}", query_denis(&text).await.unwrap()),
+                format!("Денис:\n{}", query_denis(text).await.unwrap()),
             )
             .await?;
 
@@ -325,8 +314,8 @@ async fn handle_text(bot: Bot, msg: Message) -> ResponseResult<()> {
                 bot.send_message(
                     msg.chat.id,
                     query_denis(
-                        &"напиши сообщение как будто у тебя сгорела жопа и ты уходишь из чата и плевал на \
-                          всех его участников",
+                        "напиши сообщение как будто у тебя сгорела жопа и ты уходишь из чата и плевал на \
+                         всех его участников",
                     )
                     .await
                     .unwrap(),
@@ -343,7 +332,7 @@ async fn handle_text(bot: Bot, msg: Message) -> ResponseResult<()> {
 
             bot.send_message(
                 msg.chat.id,
-                format!("Пятух:\n{}", query_petuh(&text).await.unwrap()),
+                format!("Пятух:\n{}", query_petuh(text).await.unwrap()),
             )
             .await?;
 
@@ -351,17 +340,23 @@ async fn handle_text(bot: Bot, msg: Message) -> ResponseResult<()> {
         }
 
         if text.starts_with("зул, ") {
-            let text = &text["зул, ".len()..];
-
-            bot.send_message(msg.chat.id, format!("Зул:\n{}", query_zul(&text).await.unwrap()))
-                .await?;
+            bot.send_message(
+                msg.chat.id,
+                format!(
+                    "Зул:\n{}",
+                    query_zul(text.strip_prefix("зул, ").expect("Failed to strip zyl"))
+                        .await
+                        .unwrap()
+                ),
+            )
+            .await?;
 
             if (0..O4KO_STRENGTH).fake::<u32>() == 5 {
                 bot.send_message(
                     msg.chat.id,
                     query_zul(
-                        &"напиши сообщение как будто у тебя сгорела жопа и ты уходишь из чата и плевал на \
-                          всех его участников",
+                        "напиши сообщение как будто у тебя сгорела жопа и ты уходишь из чата и плевал на \
+                         всех его участников",
                     )
                     .await
                     .unwrap(),
@@ -391,13 +386,9 @@ async fn handle_text(bot: Bot, msg: Message) -> ResponseResult<()> {
 Список петухов:
 {}
 
-Кручусь тут:
-{}
-
 (Владик Пятушара Ванючы)
 ",
                     PETUHI.join("\n"),
-                    collect_system_info()
                 ),
             )
             .await?;
@@ -489,7 +480,7 @@ struct Main {
 
 async fn get_weather(query: &str) -> Result<String> {
     let city = query.replace('?', "");
-    let city = city.split(' ').last().unwrap();
+    let city = city.split(' ').next_back().unwrap();
 
     dbg!(&city);
 
@@ -500,8 +491,7 @@ async fn get_weather(query: &str) -> Result<String> {
     let api_key = std::env::var("OPENWEATHER_API_KEY")?;
 
     let url = format!(
-        "https://api.openweathermap.org/data/2.5/weather?q={}&units=metric&lang=ru&appid={}",
-        city, api_key
+        "https://api.openweathermap.org/data/2.5/weather?q={city}&units=metric&lang=ru&appid={api_key}",
     );
 
     let response = client.get(&url).send().await?;
@@ -533,38 +523,7 @@ async fn test_weather() -> Result<()> {
     Ok(())
 }
 
-fn collect_system_info() -> String {
-    let mut info = String::new();
-
-    // if let Ok(os_type) = sys_info::os_type() {
-    //     info += &format!("OS Type: {}\n", os_type);
-    // }
-    //
-    // if let Ok(os_release) = sys_info::os_release() {
-    //     info += &format!("OS Release: {}\n", os_release);
-    // }
-
-    let hostname = fallible::hostname().unwrap();
-    info += &format!("Hostname: {}\n", hostname);
-
-    if let Ok(uname) = uname::uname() {
-        info += &format!("Architecture: {}\n", uname.machine);
-        info += &format!("Sysname: {}\n", uname.sysname);
-        info += &format!("Nodename: {}\n", uname.nodename);
-        info += &format!("Kernel Release: {}\n", uname.release);
-        info += &format!("Version: {}\n", uname.version);
-    }
-
-    info += &format!("Distro: {}\n", whoami::distro());
-    info += &format!("Username: {}\n", whoami::username());
-    info += &format!("Desktop Environment: {}\n", whoami::desktop_env());
-    info += &format!("Platform: {}\n", whoami::platform());
-
-    info
-}
-
 #[test]
 fn system_info() {
-    println!("{}", &collect_system_info());
     dbg!(APP_VERSION);
 }

@@ -20,7 +20,7 @@ spec:
     spec:
       containers:
         - name: petuh
-          image: 192.168.0.201:30500/petuh:0.11.18
+          image: 192.168.0.201:30500/petuh:0.12.102
 #          volumeMounts:
 #            - mountPath: /datadir
 #              name: datadir
