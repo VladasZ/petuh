@@ -13,10 +13,10 @@ message GenerateRequest {
   string query = 2;
 }
 
-message GenerateResponse {
+message LLMResponse {
   string response = 1;
 }
 
 service PetuhLLM {
-  rpc GenerateResponse (GenerateRequest) returns (GenerateResponse);
+  rpc GenerateResponse (GenerateRequest) returns (LLMResponse);
 }

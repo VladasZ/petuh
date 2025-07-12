@@ -4,6 +4,7 @@ use rand::prelude::IndexedRandom;
 
 use crate::phrases::{NEGATIVE_ADJ, NEGATIVE_EMOJIS};
 mod chat_gpt;
+mod llm;
 mod phrases;
 mod yayko;
 
