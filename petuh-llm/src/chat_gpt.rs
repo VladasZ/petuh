@@ -19,15 +19,15 @@ async fn test_gpt() -> Result<()> {
     Ok(())
 }
 
-pub async fn query_petuh(input: &str) -> Result<String> {
+pub(crate) async fn query_petuh(input: &str) -> Result<String> {
     query_gpt(&format!("{} {input}", std::env::var("PETUH_QUERY")?)).await
 }
 
-pub async fn query_zul(input: &str) -> Result<String> {
+pub(crate) async fn query_zul(input: &str) -> Result<String> {
     query_gpt(&format!("{} {input}", std::env::var("ZUL_QUERY")?)).await
 }
 
-pub async fn query_denis(input: &str) -> Result<String> {
+pub(crate) async fn query_denis(input: &str) -> Result<String> {
     query_gpt(&format!("{} {input}", std::env::var("DENIS_QUERY")?)).await
 }
 
