@@ -14,7 +14,7 @@ pub struct LLMClient;
 
 impl LLMClient {
     async fn get_client() -> PetuhLlmClient<Channel> {
-        const ADDRESS: &str = "http://localhost:50051";
+        const ADDRESS: &str = "http://petuh-llm:50051";
 
         CLIENT
             .get_or_init(|| async {

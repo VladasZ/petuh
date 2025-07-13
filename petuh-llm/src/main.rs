@@ -27,7 +27,7 @@ async fn main() -> Result<()> {
 
     log::info!("Starting petuh-llm ...");
 
-    let addr = "[::1]:50051".parse()?;
+    let addr = "0.0.0.0:50051".parse()?;
     let service = PetuhLLMService;
 
     println!("petuh-llm server listening on {}", addr);

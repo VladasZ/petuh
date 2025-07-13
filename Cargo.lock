@@ -1589,7 +1589,7 @@ dependencies = [
 
 [[package]]
 name = "petuh"
-version = "0.13.100"
+version = "0.13.102"
 dependencies = [
  "anyhow",
  "dotenv",
@@ -1609,7 +1609,7 @@ dependencies = [
 
 [[package]]
 name = "petuh-llm"
-version = "0.13.100"
+version = "0.13.102"
 dependencies = [
  "anyhow",
  "dotenv",

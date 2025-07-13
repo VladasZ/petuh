@@ -19,8 +19,8 @@ tags:
 
 dock:
 	./build/build-linux.py
-	./build/dock.py petuh 0.13.100
-	./build/dock.py petuh-llm 0.13.100
+	./build/dock.py petuh 0.13.102
+	./build/dock.py petuh-llm 0.13.102
 
 deploy:
 	make dock
