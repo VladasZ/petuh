@@ -19,8 +19,8 @@ tags:
 
 dock:
 	./build/build-linux.py
-	./build/dock.py petuh 0.13.102
-	./build/dock.py petuh-llm 0.13.102
+	./build/dock.py petuh 0.13.103
+	./build/dock.py petuh-llm 0.13.103
 
 deploy:
 	make dock
@@ -35,5 +35,10 @@ lint:
       \
       -A clippy::missing_panics_doc \
       -A clippy::format_push_string \
+      -A clippy::too_many_lines \
+      -A clippy::similar_names \
+      -A clippy::trivially_copy_pass_by_ref \
+      -A clippy::doc_markdown \
+      -A clippy::default_trait_access \
       \
       -D warnings

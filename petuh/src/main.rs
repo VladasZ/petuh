@@ -261,16 +261,12 @@ async fn handle_text(bot: Bot, msg: Message) -> ResponseResult<()> {
         return Ok(());
     }
 
-    match msg.kind {
-        MessageKind::Common(ref common_message) => match &common_message.media_kind {
-            MediaKind::Sticker(sticker) => {
-                if sticker.sticker.file.unique_id == "AgADl14AAqISEEs".into() {
-                    bot.send_message(msg.chat.id, "@maxon8871 !! Ну ты и петух!!! 🐓🐓").await?;
-                }
+    if let MessageKind::Common(ref common_message) = msg.kind {
+        if let MediaKind::Sticker(sticker) = &common_message.media_kind {
+            if sticker.sticker.file.unique_id == "AgADl14AAqISEEs".into() {
+                bot.send_message(msg.chat.id, "@maxon8871 !! Ну ты и петух!!! 🐓🐓").await?;
             }
-            _ => (),
-        },
-        _ => (),
+        }
     }
 
     if let Some(text) = msg.text() {

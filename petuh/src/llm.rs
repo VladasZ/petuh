@@ -1,4 +1,5 @@
 pub mod petuh {
+    #![allow(clippy::all)]
     tonic::include_proto!("petuh");
 }
 
@@ -6,7 +7,7 @@ use anyhow::Result;
 use tokio::sync::OnceCell;
 use tonic::transport::Channel;
 
-use crate::llm::petuh::{GenerateRequest, Personality, petuh_llm_client::PetuhLlmClient};
+use crate::llm::petuh::{LlmRequest, Personality, petuh_llm_client::PetuhLlmClient};
 
 static CLIENT: OnceCell<PetuhLlmClient<Channel>> = OnceCell::const_new();
 
@@ -29,7 +30,7 @@ impl LLMClient {
     pub async fn request(personality: Personality, request: &str) -> Result<String> {
         let response = Self::get_client()
             .await
-            .generate_response(GenerateRequest {
+            .generate_response(LlmRequest {
                 personality: personality as i32,
                 query:       request.to_string(),
             })

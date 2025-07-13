@@ -1,13 +1,15 @@
 syntax = "proto3";
 package petuh;
 
+message Empty {}
+
 enum Personality {
   DENIS = 0;
   ZYL = 1;
   PETUH = 2;
 }
 
-message GenerateRequest {
+message LLMRequest {
   Personality personality = 1;
   string query = 2;
 }
@@ -17,5 +19,20 @@ message LLMResponse {
 }
 
 service PetuhLLM {
-  rpc GenerateResponse (GenerateRequest) returns (LLMResponse);
+  rpc GenerateResponse (LLMRequest) returns (LLMResponse);
+}
+
+message SavedResponse {
+  string request = 1;
+  string response = 2;
+}
+
+message GetResponsesResponse {
+  repeated SavedResponse responses = 1;
+}
+
+service PetuhResponses {
+  rpc GetResponses (Empty) returns (GetResponsesResponse);
+  rpc AddResponse (SavedResponse) returns (GetResponsesResponse);
+  rpc RemoveResponse (SavedResponse) returns (GetResponsesResponse);
 }
