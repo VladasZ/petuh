@@ -1,5 +1,4 @@
 pub mod petuh {
-    #![allow(clippy::all)]
     tonic::include_proto!("petuh");
 }
 

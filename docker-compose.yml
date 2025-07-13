@@ -1,0 +1,16 @@
+services:
+  pg:
+    image: postgres:17-alpine
+    command: postgres -c max_connections=1000
+    environment:
+      POSTGRES_USER: petuh
+      POSTGRES_PASSWORD: petuh
+      POSTGRES_DB: petuh_db
+      PGDATA: /var/lib/postgresql/data
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - 54325:5432
+
+volumes:
+  postgres_data:

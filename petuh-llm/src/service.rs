@@ -1,5 +1,4 @@
 pub mod petuh {
-    #![allow(clippy::all)]
     tonic::include_proto!("petuh");
 }
 
@@ -10,7 +9,6 @@ use crate::{
     service::petuh::{LlmRequest, LlmResponse, Personality, petuh_llm_server::PetuhLlm},
 };
 
-#[derive(Default)]
 pub struct PetuhLLMService;
 
 #[tonic::async_trait]
