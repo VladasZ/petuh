@@ -15,6 +15,12 @@ stop:
 
 tags:
 	curl http://192.168.0.201:30500/v2/petuh/tags/list
+	curl http://192.168.0.201:30500/v2/petuh-llm/tags/list
+
+dock:
+	./build/build-linux.py
+	./build/dock.py petuh 0.13.100
+	./build/dock.py petuh-llm 0.13.100
 
 deploy:
 	make dock

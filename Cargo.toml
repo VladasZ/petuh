@@ -7,7 +7,7 @@ resolver = "3"
 
 [workspace.package]
 edition = "2024"
-version = "0.12.104"
+version = "0.13.100"
 
 [workspace.metadata.cargo-machete]
 ignored = ["prost"]
