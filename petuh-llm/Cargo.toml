@@ -5,16 +5,16 @@ version.workspace = true
 
 [dependencies]
 anyhow = { workspace = true }
-tokio = { workspace = true }
-tonic = { workspace = true }
-prost = { workspace = true }
-pretty_env_logger = { workspace = true }
-log = { workspace = true }
 dotenv = { workspace = true }
-sentry = { workspace = true }
+log = { workspace = true }
+pretty_env_logger = { workspace = true }
+prost = { workspace = true }
 reqwest = { workspace = true }
+sentry = { workspace = true }
 serde = { workspace = true }
 serde_json = { workspace = true }
+tokio = { workspace = true }
+tonic = { workspace = true }
 
 [build-dependencies]
 tonic-build = { workspace = true }

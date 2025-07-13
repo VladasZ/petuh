@@ -136,9 +136,6 @@ pub async fn yayko_strike(bot: Bot, msg: Message) -> Result<()> {
 
     let target_user = extract_user(&msg, chat)?;
 
-    dbg!(&current_user);
-    dbg!(&target_user);
-
     let Some(mut target_user) = target_user.clone() else {
         bot.send_message(
             msg.chat.id,
@@ -155,7 +152,6 @@ pub async fn yayko_strike(bot: Bot, msg: Message) -> Result<()> {
 
     if target_user.firstname == current_username {
         bot.send_message(msg.chat.id, "Хочешь сам себя уебать? Ты шо еблан?").await?;
-
         return Ok(());
     }
 

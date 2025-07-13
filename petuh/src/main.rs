@@ -3,7 +3,6 @@
 use rand::prelude::IndexedRandom;
 
 use crate::phrases::{NEGATIVE_ADJ, NEGATIVE_EMOJIS};
-mod chat_gpt;
 mod llm;
 mod phrases;
 mod yayko;
@@ -21,7 +20,7 @@ use teloxide::{
 };
 
 use crate::{
-    chat_gpt::{query_denis, query_petuh, query_zul},
+    llm::{LLMClient, petuh::Personality},
     phrases::NEGATIVE,
     yayko::yayko_strike,
 };
@@ -100,7 +99,8 @@ async fn handle_command(bot: Bot, msg: Message, cmd: Command) -> ResponseResult<
             bot.send_message(msg.chat.id, "🐓Рома🐓 каблук петушиный 👠").await?;
         }
         Command::Gm => {
-            let morning = query_zul(
+            let morning = LLMClient::request(
+                Personality::Zyl,
                 "Зул, напиши очень доброе поздравление с добрым утром, с теплом и позитивом, пожелай всем \
                  участникам чата хорошего дня. Добавь эмодзи разных цветов сердечек и петухов. Но все равно \
                  под конец скажи что нибудь немного оскорбительное.",
@@ -303,18 +303,22 @@ async fn handle_text(bot: Bot, msg: Message) -> ResponseResult<()> {
         }
 
         if text.starts_with("денис, ") {
-            let text = &text["денис, ".len()..];
+            let text = text.strip_prefix("денис, ").unwrap();
 
             bot.send_message(
                 msg.chat.id,
-                format!("Денис:\n{}", query_denis(text).await.unwrap()),
+                format!(
+                    "Денис:\n{}",
+                    LLMClient::request(Personality::Denis, text).await.unwrap()
+                ),
             )
             .await?;
 
             if (0..O4KO_STRENGTH).fake::<u32>() == 5 {
                 bot.send_message(
                     msg.chat.id,
-                    query_denis(
+                    LLMClient::request(
+                        Personality::Denis,
                         "напиши сообщение как будто у тебя сгорела жопа и ты уходишь из чата и плевал на \
                          всех его участников",
                     )
@@ -329,11 +333,14 @@ async fn handle_text(bot: Bot, msg: Message) -> ResponseResult<()> {
         }
 
         if text.starts_with("пятух, ") {
-            let text = &text["пятух, ".len()..];
+            let text = text.strip_prefix("пятух, ").unwrap();
 
             bot.send_message(
                 msg.chat.id,
-                format!("Пятух:\n{}", query_petuh(text).await.unwrap()),
+                format!(
+                    "Пятух:\n{}",
+                    LLMClient::request(Personality::Petuh, text).await.unwrap()
+                ),
             )
             .await?;
 
@@ -345,9 +352,12 @@ async fn handle_text(bot: Bot, msg: Message) -> ResponseResult<()> {
                 msg.chat.id,
                 format!(
                     "Зул:\n{}",
-                    query_zul(text.strip_prefix("зул, ").expect("Failed to strip zyl"))
-                        .await
-                        .unwrap()
+                    LLMClient::request(
+                        Personality::Zyl,
+                        text.strip_prefix("зул, ").expect("Failed to strip zyl")
+                    )
+                    .await
+                    .unwrap()
                 ),
             )
             .await?;
@@ -355,7 +365,8 @@ async fn handle_text(bot: Bot, msg: Message) -> ResponseResult<()> {
             if (0..O4KO_STRENGTH).fake::<u32>() == 5 {
                 bot.send_message(
                     msg.chat.id,
-                    query_zul(
+                    LLMClient::request(
+                        Personality::Zyl,
                         "напиши сообщение как будто у тебя сгорела жопа и ты уходишь из чата и плевал на \
                          всех его участников",
                     )

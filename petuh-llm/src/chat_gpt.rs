@@ -24,6 +24,9 @@ pub(crate) async fn query_petuh(input: &str) -> Result<String> {
 }
 
 pub(crate) async fn query_zul(input: &str) -> Result<String> {
+    if input.contains("panic") {
+        panic!("Zul panics! {input}");
+    }
     query_gpt(&format!("{} {input}", std::env::var("ZUL_QUERY")?)).await
 }
 

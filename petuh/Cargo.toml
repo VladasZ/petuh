@@ -9,15 +9,14 @@ dotenv = { workspace = true }
 fake = { workspace = true }
 log = { workspace = true }
 pretty_env_logger = { workspace = true }
+prost = { workspace = true }
 rand = { workspace = true }
 reqwest = { workspace = true }
 sentry = { workspace = true }
 serde = { workspace = true }
-serde_json = { workspace = true }
 teloxide = { workspace = true }
 tokio = { workspace = true }
 tonic = { workspace = true }
-prost = { workspace = true }
 
 #store = { workspace = true }
 

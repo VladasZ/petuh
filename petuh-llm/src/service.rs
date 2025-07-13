@@ -5,12 +5,12 @@ pub mod petuh {
 use tonic::{Request, Response, Status};
 
 use crate::{
-    chat_gpt::query_denis,
+    chat_gpt::{query_denis, query_petuh, query_zul},
     service::petuh::{GenerateRequest, LlmResponse, Personality, petuh_llm_server::PetuhLlm},
 };
 
 #[derive(Default)]
-pub struct PetuhLLMService {}
+pub struct PetuhLLMService;
 
 #[tonic::async_trait]
 impl PetuhLlm for PetuhLLMService {
@@ -20,13 +20,21 @@ impl PetuhLlm for PetuhLLMService {
     ) -> Result<Response<LlmResponse>, Status> {
         let request = request.into_inner();
 
-        match Personality::try_from(request.personality) {
-            Ok(Personality::Denis) => query_denis(&request.query).await?,
-            Ok(Personality::Zyl) => { /* handle Zyl */ }
-            Ok(Personality::Petuh) => { /* handle Petuh */ }
-            Err(err) => return Err(Status::invalid_argument(err.to_string())),
-        }
+        let personality = Personality::try_from(request.personality)
+            .or_else(|err| Err(Status::invalid_argument(err.to_string())))?;
 
-        todo!()
+        let response = query_response(personality, &request.query)
+            .await
+            .or_else(|err| Err(Status::internal(err.to_string())))?;
+
+        Ok(LlmResponse { response }.into())
     }
+}
+
+async fn query_response(personality: Personality, query: &str) -> anyhow::Result<String> {
+    Ok(match personality {
+        Personality::Denis => query_denis(query).await?,
+        Personality::Zyl => query_zul(query).await?,
+        Personality::Petuh => query_petuh(query).await?,
+    })
 }

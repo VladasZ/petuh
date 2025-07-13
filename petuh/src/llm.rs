@@ -14,11 +14,13 @@ pub struct LLMClient;
 
 impl LLMClient {
     async fn get_client() -> PetuhLlmClient<Channel> {
+        const ADDRESS: &str = "http://localhost:50051";
+
         CLIENT
             .get_or_init(|| async {
-                PetuhLlmClient::connect("http://petuh-llm:50051")
+                PetuhLlmClient::connect(ADDRESS)
                     .await
-                    .expect("Failed to connect")
+                    .unwrap_or_else(|err| panic!("Failed to connect to petuh-llm at {ADDRESS}. Error: {err}"))
             })
             .await
             .clone()
