@@ -24,14 +24,13 @@ reqwest = { version = "0.12", features = ["rustls-tls"] }
 sentry = "0.41"
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
+sqlx = { version = "0.8", features = ["runtime-tokio-rustls", "postgres", "rust_decimal", "chrono"] }
 teloxide = { version = "0.17", features = ["rustls", "macros"] }
 tokio = { version = "1.46", features = ["macros", "rt-multi-thread"] }
 tonic = "*"
 tonic-build = "*"
-sqlx = { version = "0.8", features = ["runtime-tokio-rustls", "postgres", "rust_decimal", "chrono"] }
 
 sercli = { path = "../deps/sercli/sercli" }
 #sercli = { git = "https://github.com/vladasz/sercli.git", rev = "f6f50dea2ee3372f4da5d95ce2083379768439eb" }
-
 
 #store = { path = "../test-engine/deps/store" }

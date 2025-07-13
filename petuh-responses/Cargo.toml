@@ -9,18 +9,15 @@ dotenv = { workspace = true }
 log = { workspace = true }
 pretty_env_logger = { workspace = true }
 prost = { workspace = true }
-reqwest = { workspace = true }
 sentry = { workspace = true }
+sercli = { workspace = true }
 serde = { workspace = true }
-serde_json = { workspace = true }
+sqlx = { workspace = true }
 tokio = { workspace = true }
 tonic = { workspace = true }
-sercli = { workspace = true }
-sqlx = { workspace = true }
-
 
 [build-dependencies]
-tokio = { workspace = true }
 anyhow = { workspace = true }
 sercli = { workspace = true }
+tokio = { workspace = true }
 tonic-build = { workspace = true }

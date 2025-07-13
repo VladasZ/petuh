@@ -5,6 +5,7 @@ use rand::prelude::IndexedRandom;
 use crate::phrases::{NEGATIVE_ADJ, NEGATIVE_EMOJIS};
 mod llm;
 mod phrases;
+mod responses;
 mod yayko;
 
 use anyhow::Result;
