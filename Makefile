@@ -18,9 +18,9 @@ tags:
 	curl http://192.168.0.201:30500/v2/petuh-llm/tags/list
 
 dock:
-	./build/build-linux.py
-	./build/dock.py petuh 0.13.103
-	./build/dock.py petuh-llm 0.13.103
+	python3 ./build/build-linux.py
+	python3 ./build/dock.py petuh 0.13.103
+	python3 ./build/dock.py petuh-llm 0.13.103
 
 deploy:
 	make dock
