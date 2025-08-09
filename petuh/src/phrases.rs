@@ -1,6 +1,8 @@
 use anyhow::{Result, anyhow};
 use rand::prelude::IndexedRandom;
 
+use crate::PETUHI;
+
 pub const POSITIVE: &[&str] = &[
     "богачь",
     "кароль",
@@ -33,6 +35,7 @@ pub const NEGATIVE: &[&str] = &[
     "обмудок",
     "хуеплёт",
     "жополиз",
+    "абосцанный лошара",
     "мудозвон",
     "говноед",
     "пидор",
@@ -48,6 +51,8 @@ pub const NEGATIVE: &[&str] = &[
     "унылое гавно",
     "мразь",
     "улшепок",
+    "криворукий уебан",
+    "бесполезный кретин",
     "пиздаватая хуета",
     "обмудская залупа",
     "ничтожество",
@@ -112,4 +117,20 @@ pub fn negative_word() -> Result<String> {
         .choose(&mut rand::rng())
         .ok_or(anyhow!("random"))
         .map(ToString::to_string)
+}
+
+fn petuh_insult() -> String {
+    let neg = NEGATIVE.choose(&mut rand::rng()).unwrap();
+    let neg_emoji = NEGATIVE_EMOJIS.choose(&mut rand::rng()).unwrap();
+    let neg_adj = NEGATIVE_ADJ.choose(&mut rand::rng()).unwrap();
+    format!("{neg} — {neg_adj} пятух! 🐓 {neg_emoji}")
+}
+
+pub fn kto() -> String {
+    let name = PETUHI.choose(&mut rand::rng()).unwrap();
+    format!("{name} {}", petuh_insult())
+}
+
+pub fn vladik_jopoliz() -> String {
+    format!("Владик жополиз!!! 👅🍑 🐓🐓🐓 {}", petuh_insult())
 }

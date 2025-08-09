@@ -2,7 +2,7 @@
 
 use rand::prelude::IndexedRandom;
 
-use crate::phrases::{NEGATIVE_ADJ, NEGATIVE_EMOJIS};
+use crate::phrases::{kto, vladik_jopoliz};
 mod llm;
 mod phrases;
 mod responses;
@@ -22,7 +22,6 @@ use teloxide::{
 
 use crate::{
     llm::{LLMClient, petuh::Personality},
-    phrases::NEGATIVE,
     yayko::yayko_strike,
 };
 
@@ -45,6 +44,8 @@ enum Command {
     R,
     #[command(description = "Уважение Владику. 🐓🐓")]
     V,
+    #[command(description = "Уважение Владику 2. 🐓🐓🐓🐓")]
+    J,
     #[command(description = "Уважение Владасу.")]
     VS,
     #[command(description = "Уважение Насте.")]
@@ -112,12 +113,7 @@ async fn handle_command(bot: Bot, msg: Message, cmd: Command) -> ResponseResult<
             bot.send_message(msg.chat.id, morning).await?;
         }
         Command::Kto => {
-            let name = PETUHI.choose(&mut rand::rng()).unwrap();
-            let neg = NEGATIVE.choose(&mut rand::rng()).unwrap();
-            let neg_emoji = NEGATIVE_EMOJIS.choose(&mut rand::rng()).unwrap();
-            let neg_adj = NEGATIVE_ADJ.choose(&mut rand::rng()).unwrap();
-            let reply = format!("{name} {neg} — {neg_adj} пятух! 🐓 {neg_emoji}");
-            bot.send_message(msg.chat.id, reply).await?;
+            bot.send_message(msg.chat.id, kto()).await?;
         }
         Command::Kub => {
             bot.send_dice(msg.chat.id).await?;
@@ -215,6 +211,9 @@ async fn handle_command(bot: Bot, msg: Message, cmd: Command) -> ResponseResult<
                  ты тут мотаешься? Занимайся своими делами.",
             )
             .await?;
+        }
+        Command::J => {
+            bot.send_message(msg.chat.id, vladik_jopoliz()).await?;
         }
     }
     Ok(())
