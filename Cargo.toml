@@ -1,7 +1,7 @@
 [workspace]
 
 default-members = ["petuh"]
-members = ["petuh", "petuh-llm", "petuh-responses"]
+members = ["petuh", "petuh-llm", "petuh-responses", "common"]
 
 resolver = "3"
 
@@ -16,8 +16,6 @@ ignored = ["prost"]
 anyhow = "1.0"
 dotenv = "0.15"
 fake = "4.2"
-log = "0.4"
-pretty_env_logger = "0.5"
 prost = "0.13"
 rand = "0.9"
 reqwest = { version = "0.12", features = ["rustls-tls"] }
@@ -29,8 +27,13 @@ teloxide = { version = "0.17", features = ["rustls", "macros"] }
 tokio = { version = "1.46", features = ["macros", "rt-multi-thread"] }
 tonic = "*"
 tonic-build = "*"
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["json"] }
+tracing-appender = "0.2"
 
 #sercli = { path = "../deps/sercli/sercli" }
 sercli = { git = "https://github.com/vladasz/sercli.git", rev = "27869d8e3dff5ac5cb22c7f0b4e31e118ca8a31a" }
 
 #store = { path = "../test-engine/deps/store" }
+
+common = { path = "common" }

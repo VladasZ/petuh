@@ -6,8 +6,6 @@ version.workspace = true
 [dependencies]
 anyhow = { workspace = true }
 dotenv = { workspace = true }
-log = { workspace = true }
-pretty_env_logger = { workspace = true }
 prost = { workspace = true }
 reqwest = { workspace = true }
 sentry = { workspace = true }

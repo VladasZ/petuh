@@ -2,3 +2,5 @@
 .idea
 .env
 generated
+.DS_Store
+/logs

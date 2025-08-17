@@ -7,8 +7,6 @@ version.workspace = true
 anyhow = { workspace = true }
 dotenv = { workspace = true }
 fake = { workspace = true }
-log = { workspace = true }
-pretty_env_logger = { workspace = true }
 prost = { workspace = true }
 rand = { workspace = true }
 reqwest = { workspace = true }
@@ -17,8 +15,11 @@ serde = { workspace = true }
 teloxide = { workspace = true }
 tokio = { workspace = true }
 tonic = { workspace = true }
+tracing = { workspace = true }
 
 #store = { workspace = true }
+
+common = { workspace = true }
 
 [build-dependencies]
 tonic-build = { workspace = true }

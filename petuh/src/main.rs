@@ -1,6 +1,7 @@
 #![allow(unreachable_code)]
 
 use rand::prelude::IndexedRandom;
+use tracing::{info, instrument};
 
 use crate::phrases::{kto, vladik_jopoliz};
 mod llm;
@@ -9,6 +10,7 @@ mod responses;
 mod yayko;
 
 use anyhow::Result;
+use common::initial_setup;
 use fake::Fake;
 use reqwest::Client;
 use serde::Deserialize;
@@ -29,7 +31,7 @@ pub const APP_VERSION: &str = env!("CARGO_PKG_VERSION");
 
 const PETUHI: &[&str] = &["Максим", "Владик", "Владас", "Рома", "Настя", "Алёна", "Витёк"];
 
-#[derive(BotCommands, Clone)]
+#[derive(BotCommands, Debug, Clone)]
 #[command(rename_rule = "lowercase", description = r"🐓 Петушиные команды:")]
 enum Command {
     #[command(description = "Помощь петушары.")]
@@ -68,6 +70,7 @@ const COMMENT_PROBABILITY: u32 = 80;
 const SHUT_UP_PROBABILITY: u32 = 110;
 const REACTION_PROBABILITY: u32 = 30;
 
+#[instrument]
 async fn handle_command(bot: Bot, msg: Message, cmd: Command) -> ResponseResult<()> {
     dbg!(&msg);
 
@@ -219,6 +222,7 @@ async fn handle_command(bot: Bot, msg: Message, cmd: Command) -> ResponseResult<
     Ok(())
 }
 
+#[instrument]
 async fn handle_text(bot: Bot, msg: Message) -> ResponseResult<()> {
     const REACTIONS: &[&str] = &["🤡", "🔥", "💯", "💊", "🤮", "🤩", "👏", "💩"];
 
@@ -420,22 +424,9 @@ async fn handle_text(bot: Bot, msg: Message) -> ResponseResult<()> {
 async fn main() -> Result<()> {
     println!("Hello");
 
-    pretty_env_logger::init();
+    let _guard = initial_setup("petuh")?;
 
-    dotenv::dotenv().ok();
-
-    let _guard = sentry::init((
-        std::env::var("SENTRY_LINK")?,
-        sentry::ClientOptions {
-            release: sentry::release_name!(),
-            // Capture user IPs and potentially sensitive headers when using HTTP server integrations
-            // see https://docs.sentry.io/platforms/rust/data-management/data-collected for more info
-            send_default_pii: true,
-            ..Default::default()
-        },
-    ));
-
-    log::info!("Starting Telegram bot...");
+    info!("Starting Telegram bot...");
 
     let bot = Bot::from_env();
 
