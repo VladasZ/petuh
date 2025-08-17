@@ -22,13 +22,3 @@ spec:
       containers:
         - name: petuh
           image: 192.168.0.201:30500/petuh:0.13.105
-#          volumeMounts:
-#            - mountPath: /datadir
-#              name: datadir
-#      volumes:
-#        - name: datadir
-#          persistentVolumeClaim:
-#            claimName: petuh-longhorn-pvc
-
-#  kubectl scale deployment petuh --replicas=0 -n petuh
-
