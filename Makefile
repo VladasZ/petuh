@@ -1,9 +1,6 @@
 
 include build/common.mk
 
-apply:
-	kubectl apply -f kubernetes
-
 pods:
 	kubectl get pods -n petuh
 
@@ -19,12 +16,8 @@ tags:
 
 dock:
 	python3 ./build/build-linux.py
-	python3 ./build/dock.py petuh 0.13.104
-	python3 ./build/dock.py petuh-llm 0.13.104
-
-deploy:
-	make dock
-	make apply
+	python3 ./build/dock.py petuh 0.13.105
+	python3 ./build/dock.py petuh-llm 0.13.105
 
 lint:
 	cargo clippy \
