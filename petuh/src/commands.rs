@@ -1,6 +1,6 @@
 use fake::Fake;
 use teloxide::{
-    Bot,
+    ApiError, Bot, RequestError,
     payloads::SendMessageSetters,
     prelude::{Message, Requester, ResponseResult},
     sugar::request::RequestReplyExt,
@@ -12,6 +12,7 @@ use tracing::instrument;
 use crate::{
     llm::{LLMClient, petuh::Personality},
     phrases::{kto, vladik_jopoliz},
+    responses::list_responses,
 };
 
 #[derive(BotCommands, Debug, Clone)]
@@ -43,6 +44,8 @@ pub enum Command {
     Kub,
     #[command(description = "Разъебать.")]
     Rz,
+    #[command(description = "Список ответов.")]
+    Otvet,
     Vladik,
 }
 
@@ -173,6 +176,11 @@ pub async fn handle_command(bot: Bot, msg: Message, cmd: Command) -> ResponseRes
         }
         Command::J => {
             bot.send_message(msg.chat.id, vladik_jopoliz()).await?;
+        }
+        Command::Otvet => {
+            list_responses(msg.chat.id, bot)
+                .await
+                .map_err(|err| RequestError::Api(ApiError::Unknown(err.to_string())))?;
         }
     }
     Ok(())

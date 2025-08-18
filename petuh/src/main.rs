@@ -7,6 +7,7 @@ use crate::{
     text::handle_text,
 };
 mod commands;
+mod data;
 mod llm;
 mod phrases;
 mod responses;

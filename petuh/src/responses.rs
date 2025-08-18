@@ -1,73 +1,96 @@
+use std::fmt::Write;
+
 use anyhow::Result;
-use tokio::sync::OnceCell;
-use tonic::transport::Channel;
+use teloxide::{
+    Bot,
+    prelude::{ChatId, Requester},
+};
+use tracing::instrument;
 
-use crate::llm::petuh::{Empty, SavedResponse, petuh_data_client::PetuhDataClient};
+use crate::{data::DataClient, llm::petuh::SavedResponse};
 
-static CLIENT: OnceCell<PetuhDataClient<Channel>> = OnceCell::const_new();
+const BEGIN: &str = "зул! на: ";
+const END: &str = "отвечай: ";
 
-pub struct DataClient;
+pub fn contains_add_response_query(message: &str) -> bool {
+    message.contains(BEGIN) && message.contains(END)
+}
 
-impl DataClient {
-    async fn get_client() -> PetuhDataClient<Channel> {
-        const ADDRESS: &str = "http://localhost:50051";
+#[instrument]
+pub async fn add_response(msg: &str, chat_id: ChatId, bot: Bot) -> Result<()> {
+    let (request, response) = parse(msg);
 
-        CLIENT
-            .get_or_init(|| async {
-                PetuhDataClient::connect(ADDRESS).await.unwrap_or_else(|err| {
-                    panic!("Failed to connect to petuh-data at {ADDRESS}. Error: {err}")
-                })
-            })
-            .await
-            .clone()
+    let existing = DataClient::get_responses().await?;
+
+    if existing.iter().any(|r| r.request == request) {
+        bot.send_message(chat_id, "Ты шо дурны? Такой запрос уже есть").await?;
+        return Ok(());
     }
 
-    pub async fn get_responses() -> Result<Vec<SavedResponse>> {
-        let responses = Self::get_client().await.get_responses(Empty {}).await?;
+    DataClient::add_response(SavedResponse {
+        request:  request.to_string(),
+        response: response.to_string(),
+    })
+    .await?;
 
-        Ok(responses.into_inner().responses)
+    bot.send_message(chat_id, format!("Оке, на: {request} буду отвечать: {response}"))
+        .await?;
+
+    Ok(())
+}
+
+#[instrument]
+pub async fn list_responses(chat_id: ChatId, bot: Bot) -> Result<()> {
+    let responses = DataClient::get_responses().await?;
+
+    if responses.is_empty() {
+        bot.send_message(chat_id, "Нэма").await?;
+        return Ok(());
     }
 
-    pub async fn add_response(response: SavedResponse) -> Result<Vec<SavedResponse>> {
-        let responses = Self::get_client().await.add_response(response).await?;
+    let mut response = "Список петушиных ответов:\n".to_string();
 
-        Ok(responses.into_inner().responses)
+    for res in responses {
+        writeln!(response, "{} - {}", res.request, res.response)?;
     }
 
-    pub async fn remove_response(response: SavedResponse) -> Result<Vec<SavedResponse>> {
-        let responses = Self::get_client().await.remove_response(response).await?;
+    bot.send_message(chat_id, response).await?;
 
-        Ok(responses.into_inner().responses)
-    }
+    Ok(())
+}
+
+pub async fn check_and_respond(msg: &str, chat_id: ChatId, bot: &Bot) -> Result<()> {
+    let responses = DataClient::get_responses().await?;
+
+    let Some(response) = responses.iter().find(|res| msg.contains(&res.request)) else {
+        return Ok(());
+    };
+
+    bot.send_message(chat_id, &response.response).await?;
+
+    Ok(())
+}
+
+fn parse(message: &str) -> (&str, &str) {
+    let query_pos = message.find(BEGIN).unwrap();
+    let answer_pos = message.find(END).unwrap();
+
+    let after_na = &message[query_pos + BEGIN.len()..answer_pos - 1];
+
+    let after_answer = &message[answer_pos + END.len()..];
+
+    (after_na, after_answer)
 }
 
 #[cfg(test)]
 mod test {
-    use anyhow::Result;
+    use crate::responses::parse;
 
-    use crate::{llm::petuh::SavedResponse, responses::DataClient};
-
-    #[ignore]
-    #[tokio::test]
-    async fn test_response_client() -> Result<()> {
-        assert_eq!(DataClient::get_responses().await?, vec![]);
-
-        let response = SavedResponse {
-            request:  "vlik".to_string(),
-            response: "pth".to_string(),
-        };
-
+    #[test]
+    fn test() {
         assert_eq!(
-            DataClient::add_response(response.clone()).await?,
-            vec![response.clone()]
+            parse(&"Зул! На: сапажына в краске отвечай: крот сабака".to_lowercase()),
+            ("сапажына в краске", "крот сабака")
         );
-
-        assert_eq!(DataClient::get_responses().await?, vec![response.clone()]);
-
-        DataClient::remove_response(response.clone()).await?;
-
-        assert_eq!(DataClient::get_responses().await?, vec![]);
-
-        Ok(())
     }
 }

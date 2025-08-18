@@ -6,6 +6,7 @@ use anyhow::Result;
 use sercli::{Crud, FieldExtension, db::prepare_db};
 use sqlx::PgPool;
 use tonic::{Request, Response, Status};
+use tracing::instrument;
 
 use crate::{
     entities::SavedResponse,
@@ -14,6 +15,7 @@ use crate::{
 
 type RpcSavedResponse = crate::service::petuh::SavedResponse;
 
+#[derive(Debug)]
 pub struct PetuhDataService {
     pool: PgPool,
 }
@@ -39,10 +41,12 @@ impl PetuhDataService {
 
 #[tonic::async_trait]
 impl PetuhData for PetuhDataService {
+    #[instrument]
     async fn get_responses(&self, _: Request<Empty>) -> Result<Response<GetResponsesResponse>, Status> {
         self.get_all_responses().await
     }
 
+    #[instrument]
     async fn add_response(
         &self,
         request: Request<RpcSavedResponse>,
@@ -57,6 +61,7 @@ impl PetuhData for PetuhDataService {
         self.get_all_responses().await
     }
 
+    #[instrument]
     async fn remove_response(
         &self,
         request: Request<RpcSavedResponse>,

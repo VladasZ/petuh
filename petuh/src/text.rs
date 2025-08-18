@@ -12,6 +12,7 @@ use tracing::instrument;
 use crate::{
     APP_VERSION, PETUHI,
     llm::{LLMClient, petuh::Personality},
+    responses::{add_response, check_and_respond, contains_add_response_query},
     weather::get_weather,
     yayko::yayko_strike,
 };
@@ -64,6 +65,10 @@ pub async fn handle_text(bot: Bot, msg: Message) -> ResponseResult<()> {
         return Ok(());
     }
 
+    check_and_respond(msg.text().unwrap_or_default(), msg.chat.id, &bot)
+        .await
+        .map_err(|err| RequestError::Api(ApiError::Unknown(err.to_string())))?;
+
     if let MessageKind::Common(ref common_message) = msg.kind
         && let MediaKind::Sticker(sticker) = &common_message.media_kind
         && sticker.sticker.file.unique_id == "AgADl14AAqISEEs".into()
@@ -73,6 +78,13 @@ pub async fn handle_text(bot: Bot, msg: Message) -> ResponseResult<()> {
 
     if let Some(text) = msg.text() {
         let text = text.to_lowercase();
+
+        if contains_add_response_query(&text) {
+            add_response(&text, msg.chat.id, bot)
+                .await
+                .map_err(|err| RequestError::Api(ApiError::Unknown(err.to_string())))?;
+            return Ok(());
+        }
 
         if text.contains("я тупой пятух") {
             bot.send_animation(
@@ -87,7 +99,7 @@ pub async fn handle_text(bot: Bot, msg: Message) -> ResponseResult<()> {
             return Ok(());
         }
 
-        if text.starts_with("хуярю яйцом") || text.starts_with("Хуярю яйцом") {
+        if text.starts_with("хуярю яйцом") {
             let result = yayko_strike(bot.clone(), msg.clone()).await.map_err(|e| {
                 dbg!(&e);
                 RequestError::Api(ApiError::CantParseUrl)

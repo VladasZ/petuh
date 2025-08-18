@@ -32,7 +32,7 @@ fn setup_logging(app: &str) -> Result<(WorkerGuard, WorkerGuard)> {
 
     let (console_writer, guard2) = non_blocking(std::io::stdout());
 
-    let filter = EnvFilter::new(format!("{}=trace", app.replace("-", "_")))
+    let filter = EnvFilter::new(format!("{}=trace", app.replace('-', "_")))
         // .add_directive("my_crate::module=trace".parse().unwrap()) // Optional: specific module
         .add_directive("warn".parse()?); // Show warnings from all crates
 
