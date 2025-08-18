@@ -8,6 +8,7 @@ RUN apt update && apt install -y \
 
 COPY target/x86_64-unknown-linux-gnu/release/petuh-data /usr/local/bin/petuh-data
 COPY .env /app/.env
+COPY ./petuh-data/migrations /app/../migrations
 WORKDIR /app
 
 RUN chmod +x /usr/local/bin/petuh-data

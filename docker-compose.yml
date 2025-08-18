@@ -1,31 +1,54 @@
 services:
   petuh:
-    image: 192.168.0.201:30500/petuh:0.13.105
+    image: 192.168.0.201:30500/petuh:0.14.104
     platform: linux/amd64
     container_name: petuh
     restart: unless-stopped
+    volumes:
+      - ./logs:/app/logs
     networks:
       - petuh-net
 
   petuh-llm:
-    image: 192.168.0.201:30500/petuh-llm:0.13.105
+    image: 192.168.0.201:30500/petuh-llm:0.14.104
     platform: linux/amd64
     container_name: petuh-llm
     restart: unless-stopped
     ports:
       - "50051:50051"
+    volumes:
+      - ./logs:/app/logs
     networks:
       - petuh-net
-  
+
   petuh-data:
-    image: 192.168.0.201:30500/petuh-data:0.13.105
+    image: 192.168.0.201:30500/petuh-data:0.14.104
     platform: linux/amd64
     container_name: petuh-data
     restart: unless-stopped
     ports:
-      - "50051:50051"
+      - "50052:50052"
+    volumes:
+      - ./logs:/app/logs
     networks:
       - petuh-net
+
+  pg:
+    image: postgres:17
+    environment:
+      POSTGRES_USER: petuh
+      POSTGRES_PASSWORD: petuh
+      POSTGRES_DB: petuh_db
+      PGDATA: /var/lib/postgresql/data
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - petuh-net
+
+volumes:
+  postgres_data:
 
 networks:
   petuh-net:

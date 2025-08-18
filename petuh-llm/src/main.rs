@@ -19,7 +19,7 @@ async fn main() -> Result<()> {
     let addr = "0.0.0.0:50051".parse()?;
     let service = PetuhLLMService;
 
-    println!("petuh-llm server listening on {}", addr);
+    info!("petuh-llm server listening on {}", addr);
 
     Server::builder().add_service(PetuhLlmServer::new(service)).serve(addr).await?;
 

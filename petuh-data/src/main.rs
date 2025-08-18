@@ -14,9 +14,10 @@ async fn main() -> Result<()> {
 
     let _guard = initial_setup("petuh-data")?;
 
-    info!("Starting petuh-data ...");
+    info!("Starting petuh-data");
+    info!(connection_string = std::env::var("PG_CONNECTION_STRING")?);
 
-    let addr = "0.0.0.0:50051".parse()?;
+    let addr = "0.0.0.0:50052".parse()?;
     let service = PetuhDataService::new().await?;
 
     info!("petuh-data server listening on {}", addr);
