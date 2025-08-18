@@ -2,20 +2,20 @@ use anyhow::Result;
 use tokio::sync::OnceCell;
 use tonic::transport::Channel;
 
-use crate::llm::petuh::{Empty, SavedResponse, petuh_responses_client::PetuhResponsesClient};
+use crate::llm::petuh::{Empty, SavedResponse, petuh_data_client::PetuhDataClient};
 
-static CLIENT: OnceCell<PetuhResponsesClient<Channel>> = OnceCell::const_new();
+static CLIENT: OnceCell<PetuhDataClient<Channel>> = OnceCell::const_new();
 
-pub struct ResponsesClient;
+pub struct DataClient;
 
-impl ResponsesClient {
-    async fn get_client() -> PetuhResponsesClient<Channel> {
+impl DataClient {
+    async fn get_client() -> PetuhDataClient<Channel> {
         const ADDRESS: &str = "http://localhost:50051";
 
         CLIENT
             .get_or_init(|| async {
-                PetuhResponsesClient::connect(ADDRESS).await.unwrap_or_else(|err| {
-                    panic!("Failed to connect to petuh-responses at {ADDRESS}. Error: {err}")
+                PetuhDataClient::connect(ADDRESS).await.unwrap_or_else(|err| {
+                    panic!("Failed to connect to petuh-data at {ADDRESS}. Error: {err}")
                 })
             })
             .await
@@ -45,12 +45,12 @@ impl ResponsesClient {
 mod test {
     use anyhow::Result;
 
-    use crate::{llm::petuh::SavedResponse, responses::ResponsesClient};
+    use crate::{llm::petuh::SavedResponse, responses::DataClient};
 
     #[ignore]
     #[tokio::test]
     async fn test_response_client() -> Result<()> {
-        assert_eq!(ResponsesClient::get_responses().await?, vec![]);
+        assert_eq!(DataClient::get_responses().await?, vec![]);
 
         let response = SavedResponse {
             request:  "vlik".to_string(),
@@ -58,15 +58,15 @@ mod test {
         };
 
         assert_eq!(
-            ResponsesClient::add_response(response.clone()).await?,
+            DataClient::add_response(response.clone()).await?,
             vec![response.clone()]
         );
 
-        assert_eq!(ResponsesClient::get_responses().await?, vec![response.clone()]);
+        assert_eq!(DataClient::get_responses().await?, vec![response.clone()]);
 
-        ResponsesClient::remove_response(response.clone()).await?;
+        DataClient::remove_response(response.clone()).await?;
 
-        assert_eq!(ResponsesClient::get_responses().await?, vec![]);
+        assert_eq!(DataClient::get_responses().await?, vec![]);
 
         Ok(())
     }

@@ -6,10 +6,10 @@ RUN apt update && apt install -y \
     ca-certificates \
     && rm -rf /var/lib/apt/lists/*
 
-COPY target/x86_64-unknown-linux-gnu/release/petuh-responses /usr/local/bin/petuh-responses
+COPY target/x86_64-unknown-linux-gnu/release/petuh-data /usr/local/bin/petuh-data
 COPY .env /app/.env
 WORKDIR /app
 
-RUN chmod +x /usr/local/bin/petuh-responses
+RUN chmod +x /usr/local/bin/petuh-data
 
-ENTRYPOINT ["/usr/local/bin/petuh-responses"]
+ENTRYPOINT ["/usr/local/bin/petuh-data"]

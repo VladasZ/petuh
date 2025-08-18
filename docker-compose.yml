@@ -16,6 +16,16 @@ services:
       - "50051:50051"
     networks:
       - petuh-net
+  
+  petuh-data:
+    image: 192.168.0.201:30500/petuh-data:0.13.105
+    platform: linux/amd64
+    container_name: petuh-data
+    restart: unless-stopped
+    ports:
+      - "50051:50051"
+    networks:
+      - petuh-net
 
 networks:
   petuh-net:

@@ -1,7 +1,7 @@
 [workspace]
 
 default-members = ["petuh"]
-members = ["petuh", "petuh-llm", "petuh-responses", "common"]
+members = ["petuh", "petuh-llm", "petuh-data", "common"]
 
 resolver = "3"
 
@@ -28,8 +28,8 @@ tokio = { version = "1.46", features = ["macros", "rt-multi-thread"] }
 tonic = "*"
 tonic-build = "*"
 tracing = "0.1"
-tracing-subscriber = { version = "0.3", features = ["json"] }
 tracing-appender = "0.2"
+tracing-subscriber = { version = "0.3", features = ["json", "env-filter"] }
 
 #sercli = { path = "../deps/sercli/sercli" }
 sercli = { git = "https://github.com/vladasz/sercli.git", rev = "27869d8e3dff5ac5cb22c7f0b4e31e118ca8a31a" }

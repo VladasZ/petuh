@@ -1,14 +1,14 @@
 use anyhow::Result;
 use sentry::ClientInitGuard;
 use tracing_appender::{non_blocking, non_blocking::WorkerGuard, rolling};
-use tracing_subscriber::{fmt, layer::SubscriberExt, util::SubscriberInitExt};
+use tracing_subscriber::{EnvFilter, fmt, layer::SubscriberExt, util::SubscriberInitExt};
 
 pub fn initial_setup(app: &str) -> Result<(ClientInitGuard, (WorkerGuard, WorkerGuard))> {
     Ok((setup_sentry()?, setup_logging(app)?))
 }
 
 fn setup_sentry() -> Result<ClientInitGuard> {
-    dotenv::dotenv().ok().expect("Failed to dotenv");
+    dotenv::dotenv().expect("Failed to dotenv");
 
     let guard = sentry::init((
         std::env::var("SENTRY_LINK")?,
@@ -25,31 +25,29 @@ fn setup_sentry() -> Result<ClientInitGuard> {
 }
 
 fn setup_logging(app: &str) -> Result<(WorkerGuard, WorkerGuard)> {
-    // pretty_env_logger::init();
-
-    // Create logs directory
     std::fs::create_dir_all("logs")?;
 
-    // File appender with daily rotation
     let file_appender = rolling::daily("logs", format!("{app}.log"));
     let (file_writer, guard) = non_blocking(file_appender);
 
-    // Console output
     let (console_writer, guard2) = non_blocking(std::io::stdout());
 
+    let filter = EnvFilter::new(format!("{app}=trace"))
+        // .add_directive("my_crate::module=trace".parse().unwrap()) // Optional: specific module
+        .add_directive("warn".parse()?); // Show warnings from all crates
+
     tracing_subscriber::registry()
+        .with(filter)
         .with(
             fmt::layer()
                 .with_writer(file_writer)
-                .json() // JSON format for easier parsing in ELK
+                .json()
                 .with_target(true)
                 .with_thread_ids(true)
                 .with_file(true)
                 .with_line_number(true),
         )
-        .with(
-            fmt::layer().with_writer(console_writer).pretty(), // Human-readable for console
-        )
+        .with(fmt::layer().with_writer(console_writer).pretty())
         .init();
 
     Ok((guard, guard2))

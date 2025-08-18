@@ -9,19 +9,19 @@ use tonic::{Request, Response, Status};
 
 use crate::{
     entities::SavedResponse,
-    service::petuh::{Empty, GetResponsesResponse, petuh_responses_server::PetuhResponses},
+    service::petuh::{Empty, GetResponsesResponse, petuh_data_server::PetuhData},
 };
 
 type RpcSavedResponse = crate::service::petuh::SavedResponse;
 
-pub struct PetuhResponsesService {
+pub struct PetuhDataService {
     pool: PgPool,
 }
 
-impl PetuhResponsesService {
+impl PetuhDataService {
     pub async fn new() -> Result<Self> {
         Ok(Self {
-            pool: prepare_db("petuh-responses/migrations").await?,
+            pool: prepare_db("../migrations").await?,
         })
     }
 
@@ -38,7 +38,7 @@ impl PetuhResponsesService {
 }
 
 #[tonic::async_trait]
-impl PetuhResponses for PetuhResponsesService {
+impl PetuhData for PetuhDataService {
     async fn get_responses(&self, _: Request<Empty>) -> Result<Response<GetResponsesResponse>, Status> {
         self.get_all_responses().await
     }

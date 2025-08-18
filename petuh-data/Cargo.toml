@@ -1,18 +1,19 @@
 [package]
 edition.workspace = true
-name = "petuh-responses"
+name = "petuh-data"
 version.workspace = true
 
 [dependencies]
 anyhow = { workspace = true }
-dotenv = { workspace = true }
 prost = { workspace = true }
-sentry = { workspace = true }
 sercli = { workspace = true }
 serde = { workspace = true }
 sqlx = { workspace = true }
 tokio = { workspace = true }
 tonic = { workspace = true }
+tracing = { workspace = true }
+
+common = { workspace = true }
 
 [build-dependencies]
 anyhow = { workspace = true }

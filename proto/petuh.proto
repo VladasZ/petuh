@@ -31,7 +31,7 @@ message GetResponsesResponse {
   repeated SavedResponse responses = 1;
 }
 
-service PetuhResponses {
+service PetuhData {
   rpc GetResponses (Empty) returns (GetResponsesResponse);
   rpc AddResponse (SavedResponse) returns (GetResponsesResponse);
   rpc RemoveResponse (SavedResponse) returns (GetResponsesResponse);

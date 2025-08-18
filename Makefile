@@ -13,11 +13,13 @@ stop:
 tags:
 	curl http://192.168.0.201:30500/v2/petuh/tags/list
 	curl http://192.168.0.201:30500/v2/petuh-llm/tags/list
+	curl http://192.168.0.201:30500/v2/petuh-data/tags/list
 
 dock:
 	python3 ./build/build-linux.py
 	python3 ./build/dock.py petuh 0.13.105
 	python3 ./build/dock.py petuh-llm 0.13.105
+	python3 ./build/dock.py petuh-data 0.13.105
 
 lint:
 	cargo clippy \
@@ -27,6 +29,7 @@ lint:
       -W clippy::pedantic \
       \
       -A clippy::missing_panics_doc \
+      -A clippy::missing_errors_doc \
       -A clippy::format_push_string \
       -A clippy::too_many_lines \
       -A clippy::similar_names \
