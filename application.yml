@@ -1,0 +1,18 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: petuh
+  namespace: argocd
+spec:
+  destination:
+    namespace: petuh
+    server: https://kubernetes.default.svc
+  source:
+    path: kubernetes
+    repoURL: git@github.com:VladasZ/petuh.git
+    targetRevision: release
+  sources: [ ]
+  project: default
+  syncPolicy:
+    syncOptions:
+      - CreateNamespace=true
