@@ -17,9 +17,9 @@ tags:
 
 dock:
 	python3 ./build/build-linux.py
-	python3 ./build/dock.py petuh 0.14.109
-	python3 ./build/dock.py petuh-llm 0.14.109
-	python3 ./build/dock.py petuh-data 0.14.109
+	python3 ./build/dock.py petuh 0.14.111
+	python3 ./build/dock.py petuh-llm 0.14.111
+	python3 ./build/dock.py petuh-data 0.14.111
 
 lint:
 	cargo clippy \

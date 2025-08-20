@@ -547,7 +547,7 @@ dependencies = [
 
 [[package]]
 name = "common"
-version = "0.14.109"
+version = "0.14.111"
 dependencies = [
  "anyhow",
  "dotenv",
@@ -2044,7 +2044,7 @@ dependencies = [
 
 [[package]]
 name = "petuh"
-version = "0.14.109"
+version = "0.14.111"
 dependencies = [
  "anyhow",
  "common",
@@ -2063,7 +2063,7 @@ dependencies = [
 
 [[package]]
 name = "petuh-data"
-version = "0.14.109"
+version = "0.14.111"
 dependencies = [
  "anyhow",
  "common",
@@ -2079,7 +2079,7 @@ dependencies = [
 
 [[package]]
 name = "petuh-llm"
-version = "0.14.109"
+version = "0.14.111"
 dependencies = [
  "anyhow",
  "common",

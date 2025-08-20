@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: petuh-data
-          image: 192.168.0.201:30500/petuh-data:0.14.109
+          image: 192.168.0.201:30500/petuh-data:0.14.111
 ---
 apiVersion: v1
 kind: Service
