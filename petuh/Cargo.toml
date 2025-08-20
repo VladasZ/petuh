@@ -10,7 +10,6 @@ fake = { workspace = true }
 prost = { workspace = true }
 rand = { workspace = true }
 reqwest = { workspace = true }
-sentry = { workspace = true }
 serde = { workspace = true }
 teloxide = { workspace = true }
 tokio = { workspace = true }

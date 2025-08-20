@@ -4,3 +4,4 @@
 generated
 .DS_Store
 /logs
+/infra/secrets/decrypted

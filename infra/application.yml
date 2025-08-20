@@ -8,7 +8,7 @@ spec:
     namespace: petuh
     server: https://kubernetes.default.svc
   source:
-    path: kubernetes
+    path: infra/kube
     repoURL: git@github.com:VladasZ/petuh.git
     targetRevision: release
   sources: [ ]

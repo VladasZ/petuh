@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: petuh-llm
+  namespace: petuh
+spec:
+  replicas: 1
+  revisionHistoryLimit: 3
+  selector:
+    matchLabels:
+      app: petuh-llm
+  template:
+    metadata:
+      labels:
+        app: petuh-llm
+    spec:
+      containers:
+        - name: petuh-llm
+          image: 192.168.0.201:30500/petuh-llm:0.14.109
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: petuh-llm
+  namespace: petuh
+spec:
+  selector:
+    app: petuh-llm
+  ports:
+    - protocol: TCP
+      port: 50051
+      targetPort: 50051
+  type: ClusterIP

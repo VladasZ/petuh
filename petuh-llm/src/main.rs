@@ -2,7 +2,9 @@ mod chat_gpt;
 mod service;
 
 use anyhow::Result;
+use common::initial_setup;
 use tonic::transport::Server;
+use tracing::info;
 
 use crate::service::{PetuhLLMService, petuh::petuh_llm_server::PetuhLlmServer};
 
@@ -10,27 +12,14 @@ use crate::service::{PetuhLLMService, petuh::petuh_llm_server::PetuhLlmServer};
 async fn main() -> Result<()> {
     println!("Hello");
 
-    pretty_env_logger::init();
+    let _guard = initial_setup("petuh-llm")?;
 
-    dotenv::dotenv().ok();
-
-    let _guard = sentry::init((
-        std::env::var("SENTRY_LINK")?,
-        sentry::ClientOptions {
-            release: sentry::release_name!(),
-            // Capture user IPs and potentially sensitive headers when using HTTP server integrations
-            // see https://docs.sentry.io/platforms/rust/data-management/data-collected for more info
-            send_default_pii: true,
-            ..Default::default()
-        },
-    ));
-
-    log::info!("Starting petuh-llm ...");
+    info!("Starting petuh-llm ...");
 
     let addr = "0.0.0.0:50051".parse()?;
     let service = PetuhLLMService;
 
-    println!("petuh-llm server listening on {}", addr);
+    info!("petuh-llm server listening on {}", addr);
 
     Server::builder().add_service(PetuhLlmServer::new(service)).serve(addr).await?;
 
