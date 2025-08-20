@@ -6,5 +6,20 @@ metadata:
 spec:
   instances: 3
 
+  postgresql:
+    parameters:
+      max_connections: "200"
+
+  bootstrap:
+    initdb:
+      database: petuh_db
+      owner: petuh
+      secret:
+        name: postgres-credentials
+
   storage:
     size: 1Gi
+    storageClass: "local-path"
+
+  monitoring:
+    enabled: true

@@ -1,0 +1,4 @@
+creation_rules:
+  - pgp: "990835A9A98E0DD7FE36241B691422132581B365"
+    encrypted_regex: '(?i)(password|webhook|username)'
+    #    path_regex: 'secrets/.*\.yaml$'

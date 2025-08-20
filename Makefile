@@ -17,9 +17,9 @@ tags:
 
 dock:
 	python3 ./build/build-linux.py
-	python3 ./build/dock.py petuh 0.14.108
-	python3 ./build/dock.py petuh-llm 0.14.108
-	python3 ./build/dock.py petuh-data 0.14.108
+	python3 ./build/dock.py petuh 0.14.109
+	python3 ./build/dock.py petuh-llm 0.14.109
+	python3 ./build/dock.py petuh-data 0.14.109
 
 lint:
 	cargo clippy \
@@ -38,3 +38,11 @@ lint:
       -A clippy::default_trait_access \
       \
       -D warnings
+
+enc:
+	sops -e infra/secrets/decrypted/pg.yml > infra/secrets/pg.enc.yml
+	rm -rf infra/secrets/decrypted
+
+decr:
+	mkdir -p infra/secrets/decrypted
+	sops -d infra/secrets/pg.enc.yml > infra/secrets/decrypted/pg.yml
