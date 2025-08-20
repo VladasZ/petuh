@@ -20,6 +20,3 @@ spec:
   storage:
     size: 1Gi
     storageClass: "local-path"
-
-  monitoring:
-    enabled: true
