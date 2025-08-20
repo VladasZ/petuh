@@ -20,3 +20,20 @@ spec:
   storage:
     size: 1Gi
     storageClass: "local-path"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: pg-rw-nodeport
+  namespace: petuh
+spec:
+  type: NodePort
+  ports:
+    - name: postgres
+      port: 5432
+      targetPort: 5432
+      nodePort: 30432
+      protocol: TCP
+  selector:
+    cnpg.io/cluster: pg
+    cnpg.io/instanceRole: primary
