@@ -2,7 +2,9 @@ use anyhow::Result;
 use tokio::sync::OnceCell;
 use tonic::transport::Channel;
 
-use crate::llm::petuh::{Empty, SavedResponse, petuh_data_client::PetuhDataClient};
+use crate::llm::petuh::{
+    AddUserResponse, Empty, GetUserRequest, SavedResponse, User, petuh_data_client::PetuhDataClient,
+};
 
 static CLIENT: OnceCell<PetuhDataClient<Channel>> = OnceCell::const_new();
 
@@ -38,6 +40,27 @@ impl DataClient {
         let responses = Self::get_client().await.remove_response(response).await?;
 
         Ok(responses.into_inner().responses)
+    }
+
+    pub async fn add_user(user: &teloxide::types::User) -> Result<AddUserResponse> {
+        let response = Self::get_client()
+            .await
+            .add_user(User {
+                telegram_id: i32::try_from(user.id.0).expect("Failed to convert user id to i32"),
+                is_bot:      user.is_bot,
+                first_name:  user.first_name.clone(),
+                username:    user.username.clone(),
+                nickname:    None,
+            })
+            .await?;
+
+        Ok(response.into_inner())
+    }
+
+    pub async fn get_user(user_id: i32) -> Result<User> {
+        let response = Self::get_client().await.get_user(GetUserRequest { user_id }).await?;
+
+        Ok((response.into_inner().into()))
     }
 }
 

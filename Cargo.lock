@@ -547,7 +547,7 @@ dependencies = [
 
 [[package]]
 name = "common"
-version = "0.14.111"
+version = "0.15.100"
 dependencies = [
  "anyhow",
  "dotenv",
@@ -1087,7 +1087,7 @@ dependencies = [
 [[package]]
 name = "generator"
 version = "0.2.1"
-source = "git+https://github.com/vladasz/sercli.git?rev=27869d8e3dff5ac5cb22c7f0b4e31e118ca8a31a#27869d8e3dff5ac5cb22c7f0b4e31e118ca8a31a"
+source = "git+https://github.com/vladasz/sercli.git?rev=5988dd243b0437c92971ab0c37d349208d91ed37#5988dd243b0437c92971ab0c37d349208d91ed37"
 dependencies = [
  "Inflector",
  "anyhow",
@@ -2044,7 +2044,7 @@ dependencies = [
 
 [[package]]
 name = "petuh"
-version = "0.14.111"
+version = "0.15.100"
 dependencies = [
  "anyhow",
  "common",
@@ -2063,7 +2063,7 @@ dependencies = [
 
 [[package]]
 name = "petuh-data"
-version = "0.14.111"
+version = "0.15.100"
 dependencies = [
  "anyhow",
  "common",
@@ -2079,7 +2079,7 @@ dependencies = [
 
 [[package]]
 name = "petuh-llm"
-version = "0.14.111"
+version = "0.15.100"
 dependencies = [
  "anyhow",
  "common",
@@ -3029,7 +3029,7 @@ dependencies = [
 [[package]]
 name = "sercli"
 version = "0.2.1"
-source = "git+https://github.com/vladasz/sercli.git?rev=27869d8e3dff5ac5cb22c7f0b4e31e118ca8a31a#27869d8e3dff5ac5cb22c7f0b4e31e118ca8a31a"
+source = "git+https://github.com/vladasz/sercli.git?rev=5988dd243b0437c92971ab0c37d349208d91ed37#5988dd243b0437c92971ab0c37d349208d91ed37"
 dependencies = [
  "Inflector",
  "anyhow",
@@ -3056,7 +3056,7 @@ dependencies = [
 [[package]]
 name = "sercli_utils"
 version = "0.2.1"
-source = "git+https://github.com/vladasz/sercli.git?rev=27869d8e3dff5ac5cb22c7f0b4e31e118ca8a31a#27869d8e3dff5ac5cb22c7f0b4e31e118ca8a31a"
+source = "git+https://github.com/vladasz/sercli.git?rev=5988dd243b0437c92971ab0c37d349208d91ed37#5988dd243b0437c92971ab0c37d349208d91ed37"
 dependencies = [
  "anyhow",
  "home",
@@ -3269,9 +3269,9 @@ dependencies = [
 
 [[package]]
 name = "sqlparser"
-version = "0.57.0"
+version = "0.58.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "07c5f081b292a3d19637f0b32a79e28ff14a9fd23ef47bd7fce08ff5de221eca"
+checksum = "ec4b661c54b1e4b603b37873a18c59920e4c51ea8ea2cf527d925424dbd4437c"
 dependencies = [
  "log",
  "recursive",

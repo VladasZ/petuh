@@ -7,7 +7,7 @@ use teloxide::{
     sugar::request::RequestReplyExt,
     types::{InputFile, MediaKind, Message, MessageKind, ReactionType},
 };
-use tracing::instrument;
+use tracing::{error, instrument};
 
 use crate::{
     APP_VERSION, PETUHI,
@@ -80,10 +80,14 @@ pub async fn handle_text(bot: Bot, msg: Message) -> ResponseResult<()> {
         let text = text.to_lowercase();
 
         if contains_add_response_query(&text) {
-            add_response(&text, msg.chat.id, bot)
-                .await
-                .map_err(|err| RequestError::Api(ApiError::Unknown(err.to_string())))?;
-            return Ok(());
+            if let Some(user) = msg.from {
+                add_response(&text, user, msg.chat.id, bot)
+                    .await
+                    .map_err(|err| RequestError::Api(ApiError::Unknown(err.to_string())))?;
+                return Ok(());
+            } else {
+                error!(msg = format!("{:?}", msg), "Message without user");
+            }
         }
 
         if text.contains("я тупой пятух") {

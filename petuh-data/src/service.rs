@@ -6,14 +6,17 @@ use anyhow::Result;
 use sercli::{Crud, FieldExtension, db::prepare_db};
 use sqlx::PgPool;
 use tonic::{Request, Response, Status};
-use tracing::instrument;
+use tracing::{info, instrument};
 
 use crate::{
-    entities::SavedResponse,
-    service::petuh::{Empty, GetResponsesResponse, petuh_data_server::PetuhData},
+    entities::{SavedResponse, User},
+    service::petuh::{
+        AddUserResponse, Empty, GetResponsesResponse, GetUserRequest, petuh_data_server::PetuhData,
+    },
 };
 
-type RpcSavedResponse = crate::service::petuh::SavedResponse;
+type RpcSavedResponse = petuh::SavedResponse;
+type RpcUser = petuh::User;
 
 #[derive(Debug)]
 pub struct PetuhDataService {
@@ -53,6 +56,12 @@ impl PetuhData for PetuhDataService {
     ) -> Result<Response<GetResponsesResponse>, Status> {
         let response: SavedResponse = request.into_inner().into();
 
+        info!(
+            response = response.response,
+            user_id = response.user_id,
+            "adding response"
+        );
+
         response
             .insert(&self.pool)
             .await
@@ -73,7 +82,52 @@ impl PetuhData for PetuhDataService {
             .await
             .or_else(|err| Err(Status::internal(err.to_string())))?;
 
+        info!(response_id = response.id, "deleted response");
+
         self.get_all_responses().await
+    }
+
+    #[instrument]
+    async fn add_user(&self, user: Request<RpcUser>) -> Result<Response<AddUserResponse>, Status> {
+        let user: User = user.into_inner().into();
+
+        if User::TELEGRAM_ID
+            .one_where(user.telegram_id, &self.pool)
+            .await
+            .or_else(|err| Err(Status::internal(err.to_string())))?
+            .is_some()
+        {
+            return Ok(Response::new(AddUserResponse { exists: true }));
+        }
+
+        info!(telegram_id = user.telegram_id, "adding new user");
+
+        user.insert(&self.pool)
+            .await
+            .or_else(|err| Err(Status::internal(err.to_string())))?;
+
+        Ok(Response::new(AddUserResponse { exists: false }))
+    }
+
+    #[instrument]
+    async fn get_user(
+        &self,
+        request: Request<GetUserRequest>,
+    ) -> std::result::Result<Response<petuh::User>, Status> {
+        let user_id: i32 = request.into_inner().user_id;
+
+        let user = User::TELEGRAM_ID
+            .one_where(user_id, &self.pool)
+            .await
+            .or_else(|err| Err(Status::internal(err.to_string())))?;
+
+        let Some(user) = user else {
+            return Err(Status::internal(
+                format!("User with id: {user_id} doesn't exist",),
+            ));
+        };
+
+        Ok(Response::new(user.into()))
     }
 }
 
@@ -99,4 +153,10 @@ macro_rules! auto_from {
     };
 }
 
-auto_from!(SavedResponse, RpcSavedResponse, [request, response]);
+auto_from!(SavedResponse, RpcSavedResponse, [id, user_id, request, response]);
+
+auto_from!(
+    User,
+    RpcUser,
+    [telegram_id, is_bot, first_name, username, nickname]
+);

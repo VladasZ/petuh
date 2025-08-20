@@ -5,7 +5,7 @@ use teloxide::{
     Bot,
     prelude::{ChatId, Requester},
 };
-use tracing::instrument;
+use tracing::{info, instrument};
 
 use crate::{data::DataClient, llm::petuh::SavedResponse};
 
@@ -17,17 +17,27 @@ pub fn contains_add_response_query(message: &str) -> bool {
 }
 
 #[instrument]
-pub async fn add_response(msg: &str, chat_id: ChatId, bot: Bot) -> Result<()> {
+pub async fn add_response(msg: &str, user: teloxide::types::User, chat_id: ChatId, bot: Bot) -> Result<()> {
     let (request, response) = parse(msg);
 
     let existing = DataClient::get_responses().await?;
 
     if existing.iter().any(|r| r.request == request) {
-        bot.send_message(chat_id, "Ты шо дурны? Такой запрос уже есть").await?;
+        bot.send_message(
+            chat_id,
+            format!("{}, ты шо дурны? Такой запрос уже есть", user.first_name),
+        )
+        .await?;
         return Ok(());
     }
 
+    if !DataClient::add_user(&user).await?.exists {
+        info!(user = format!("{user:?}"), "user added");
+    }
+
     DataClient::add_response(SavedResponse {
+        id:       0,
+        user_id:  user.id.0.try_into().expect("Failed to convert user id"),
         request:  request.to_string(),
         response: response.to_string(),
     })
@@ -51,7 +61,21 @@ pub async fn list_responses(chat_id: ChatId, bot: Bot) -> Result<()> {
     let mut response = "Список петушиных ответов:\n".to_string();
 
     for res in responses {
-        writeln!(response, "{} - {}", res.request, res.response)?;
+        let user = DataClient::get_user(res.user_id).await?;
+
+        dbg!(&user);
+
+        write!(
+            response,
+            "{} - {}. Автор: {}",
+            res.request, res.response, user.first_name
+        )?;
+
+        if let Some(nickname) = user.nickname {
+            write!(response, " ({})", nickname)?;
+        }
+
+        writeln!(response)?;
     }
 
     bot.send_message(chat_id, response).await?;
@@ -62,7 +86,7 @@ pub async fn list_responses(chat_id: ChatId, bot: Bot) -> Result<()> {
 pub async fn check_and_respond(msg: &str, chat_id: ChatId, bot: &Bot) -> Result<()> {
     let responses = DataClient::get_responses().await?;
 
-    let Some(response) = responses.iter().find(|res| msg.contains(&res.request)) else {
+    let Some(response) = responses.iter().find(|res| msg.to_lowercase().contains(&res.request)) else {
         return Ok(());
     };
 

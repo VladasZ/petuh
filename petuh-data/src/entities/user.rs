@@ -1,4 +1,3 @@
-
 #[allow(unused_imports)]
 #[allow(clippy::wildcard_imports)]
 use sercli::*;
@@ -17,9 +16,10 @@ mod reflected {
     reflected::Reflected,
     sqlx::FromRow,
 )]
-pub struct SavedResponse {
-    pub id: ID,
-    pub user_id: i32,
-    pub request: String,
-    pub response: String,
+pub struct User {
+    pub telegram_id: i32,
+    pub is_bot:      bool,
+    pub first_name:  String,
+    pub username:    Option<String>,
+    pub nickname:    Option<String>,
 }
