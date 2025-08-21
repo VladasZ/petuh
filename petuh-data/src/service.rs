@@ -9,7 +9,7 @@ use tonic::{Request, Response, Status};
 use tracing::{info, instrument};
 
 use crate::{
-    entities::{SavedResponse, User},
+    entities::{Chat, ChatKind, SavedResponse, User},
     service::petuh::{
         AddUserResponse, Empty, GetResponsesResponse, GetUserRequest, petuh_data_server::PetuhData,
     },
@@ -17,6 +17,7 @@ use crate::{
 
 type RpcSavedResponse = petuh::SavedResponse;
 type RpcUser = petuh::User;
+type RpcChat = petuh::Chat;
 
 #[derive(Debug)]
 pub struct PetuhDataService {
@@ -82,7 +83,11 @@ impl PetuhData for PetuhDataService {
             .await
             .or_else(|err| Err(Status::internal(err.to_string())))?;
 
-        info!(response_id = response.id, "deleted response");
+        info!(
+            used_id = response.user_id,
+            chat_id = response.chat_id,
+            "deleted response"
+        );
 
         self.get_all_responses().await
     }
@@ -114,7 +119,7 @@ impl PetuhData for PetuhDataService {
         &self,
         request: Request<GetUserRequest>,
     ) -> std::result::Result<Response<petuh::User>, Status> {
-        let user_id: i32 = request.into_inner().user_id;
+        let user_id: i64 = request.into_inner().user_id;
 
         let user = User::TELEGRAM_ID
             .one_where(user_id, &self.pool)
@@ -129,6 +134,29 @@ impl PetuhData for PetuhDataService {
 
         Ok(Response::new(user.into()))
     }
+
+    #[instrument]
+    async fn add_chat(&self, request: Request<RpcChat>) -> std::result::Result<Response<Empty>, Status> {
+        let chat: Chat = request.into_inner().into();
+
+        if Chat::TELEGRAM_ID
+            .one_where(chat.telegram_id, &self.pool)
+            .await
+            .or_else(|err| Err(Status::internal(err.to_string())))?
+            .is_some()
+        {
+            return Ok(Empty {}.into());
+        };
+
+        let chat = chat
+            .insert(&self.pool)
+            .await
+            .or_else(|err| Err(Status::internal(err.to_string())))?;
+
+        info!(chat_id = chat.telegram_id, "chat added");
+
+        Ok(Empty {}.into())
+    }
 }
 
 macro_rules! auto_from {
@@ -136,7 +164,7 @@ macro_rules! auto_from {
         impl From<$a> for $b {
             fn from(value: $a) -> Self {
                 Self {
-                    $( $field: value.$field ),*,
+                    $( $field: value.$field.into() ),*,
                     ..Default::default()
                 }
             }
@@ -145,7 +173,7 @@ macro_rules! auto_from {
         impl From<$b> for $a {
             fn from(value: $b) -> Self {
                 Self {
-                    $( $field: value.$field ),*,
+                    $( $field: value.$field.into() ),*,
                     ..Default::default()
                 }
             }
@@ -153,10 +181,35 @@ macro_rules! auto_from {
     };
 }
 
-auto_from!(SavedResponse, RpcSavedResponse, [id, user_id, request, response]);
+auto_from!(
+    SavedResponse,
+    RpcSavedResponse,
+    [user_id, chat_id, request, response]
+);
 
 auto_from!(
     User,
     RpcUser,
     [telegram_id, is_bot, first_name, username, nickname]
 );
+
+impl From<ChatKind> for i32 {
+    fn from(value: ChatKind) -> Self {
+        match value {
+            ChatKind::Public => 0,
+            ChatKind::Private => 1,
+        }
+    }
+}
+
+impl From<i32> for ChatKind {
+    fn from(value: i32) -> Self {
+        match value {
+            0 => ChatKind::Public,
+            1 => ChatKind::Private,
+            _ => panic!("Invalid chat kind: {value}"),
+        }
+    }
+}
+
+auto_from!(Chat, RpcChat, [telegram_id, name, kind]);

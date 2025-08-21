@@ -29,6 +29,10 @@ pub async fn handle_text(bot: Bot, msg: Message) -> ResponseResult<()> {
 
     dbg!(&msg);
 
+    DataClient::add_chat(&msg.chat)
+        .await
+        .map_err(|err| RequestError::Api(ApiError::Unknown(err.to_string())))?;
+
     if let Some(ref user) = msg.from {
         if !DataClient::add_user(user)
             .await

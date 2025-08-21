@@ -22,7 +22,7 @@ pub async fn add_response(msg: &str, user: teloxide::types::User, chat_id: ChatI
 
     let existing = DataClient::get_responses().await?;
 
-    if existing.iter().any(|r| r.request == request) {
+    if existing.iter().any(|r| r.chat_id == chat_id.0 && r.request == request) {
         bot.send_message(
             chat_id,
             format!("{}, ты шо дурны? Такой запрос уже есть", user.first_name),
@@ -32,8 +32,8 @@ pub async fn add_response(msg: &str, user: teloxide::types::User, chat_id: ChatI
     }
 
     DataClient::add_response(SavedResponse {
-        id:       0,
         user_id:  user.id.0.try_into().expect("Failed to convert user id"),
+        chat_id:  chat_id.0.try_into().expect("Failed to convert chat id"),
         request:  request.to_string(),
         response: response.to_string(),
     })
@@ -47,7 +47,11 @@ pub async fn add_response(msg: &str, user: teloxide::types::User, chat_id: ChatI
 
 #[instrument]
 pub async fn list_responses(chat_id: ChatId, bot: Bot) -> Result<()> {
-    let responses = DataClient::get_responses().await?;
+    let responses: Vec<_> = DataClient::get_responses()
+        .await?
+        .into_iter()
+        .filter(|r| r.chat_id == chat_id.0)
+        .collect();
 
     if responses.is_empty() {
         bot.send_message(chat_id, "Нэма").await?;
@@ -82,7 +86,10 @@ pub async fn list_responses(chat_id: ChatId, bot: Bot) -> Result<()> {
 pub async fn check_and_respond(msg: &str, chat_id: ChatId, bot: &Bot) -> Result<()> {
     let responses = DataClient::get_responses().await?;
 
-    let Some(response) = responses.iter().find(|res| msg.to_lowercase().contains(&res.request)) else {
+    let Some(response) = responses
+        .iter()
+        .find(|res| res.chat_id as i64 == chat_id.0 && msg.to_lowercase().contains(&res.request))
+    else {
         return Ok(());
     };
 

@@ -17,10 +17,11 @@ mod reflected {
     reflected::Reflected,
     sqlx::FromRow,
 )]
-pub struct User {
-    pub telegram_id: i64,
-    pub is_bot: bool,
-    pub first_name: String,
-    pub username: Option<String>,
-    pub nickname: Option<String>,
+pub struct UserStat {
+    pub user_id: i64,
+    pub chat_id: i64,
+    pub messages: i32,
+    pub kto: i32,
+    pub llm: i32,
+    pub commands: i32,
 }

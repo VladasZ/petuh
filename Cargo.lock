@@ -547,7 +547,7 @@ dependencies = [
 
 [[package]]
 name = "common"
-version = "0.15.102"
+version = "0.16.100"
 dependencies = [
  "anyhow",
  "dotenv",
@@ -1087,7 +1087,7 @@ dependencies = [
 [[package]]
 name = "generator"
 version = "0.2.1"
-source = "git+https://github.com/vladasz/sercli.git?rev=5988dd243b0437c92971ab0c37d349208d91ed37#5988dd243b0437c92971ab0c37d349208d91ed37"
+source = "git+https://github.com/vladasz/sercli.git?rev=960cb152c8bf1a3b1c98030c9288ee5d3b2eb91f#960cb152c8bf1a3b1c98030c9288ee5d3b2eb91f"
 dependencies = [
  "Inflector",
  "anyhow",
@@ -2044,7 +2044,7 @@ dependencies = [
 
 [[package]]
 name = "petuh"
-version = "0.15.102"
+version = "0.16.100"
 dependencies = [
  "anyhow",
  "common",
@@ -2063,7 +2063,7 @@ dependencies = [
 
 [[package]]
 name = "petuh-data"
-version = "0.15.102"
+version = "0.16.100"
 dependencies = [
  "anyhow",
  "common",
@@ -2071,6 +2071,7 @@ dependencies = [
  "sercli",
  "serde",
  "sqlx",
+ "strum",
  "tokio",
  "tonic",
  "tonic-build",
@@ -2079,7 +2080,7 @@ dependencies = [
 
 [[package]]
 name = "petuh-llm"
-version = "0.15.102"
+version = "0.16.100"
 dependencies = [
  "anyhow",
  "common",
@@ -3029,7 +3030,7 @@ dependencies = [
 [[package]]
 name = "sercli"
 version = "0.2.1"
-source = "git+https://github.com/vladasz/sercli.git?rev=5988dd243b0437c92971ab0c37d349208d91ed37#5988dd243b0437c92971ab0c37d349208d91ed37"
+source = "git+https://github.com/vladasz/sercli.git?rev=960cb152c8bf1a3b1c98030c9288ee5d3b2eb91f#960cb152c8bf1a3b1c98030c9288ee5d3b2eb91f"
 dependencies = [
  "Inflector",
  "anyhow",
@@ -3056,7 +3057,7 @@ dependencies = [
 [[package]]
 name = "sercli_utils"
 version = "0.2.1"
-source = "git+https://github.com/vladasz/sercli.git?rev=5988dd243b0437c92971ab0c37d349208d91ed37#5988dd243b0437c92971ab0c37d349208d91ed37"
+source = "git+https://github.com/vladasz/sercli.git?rev=960cb152c8bf1a3b1c98030c9288ee5d3b2eb91f#960cb152c8bf1a3b1c98030c9288ee5d3b2eb91f"
 dependencies = [
  "anyhow",
  "home",

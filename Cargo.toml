@@ -7,7 +7,7 @@ resolver = "3"
 
 [workspace.package]
 edition = "2024"
-version = "0.15.102"
+version = "0.16.100"
 
 [workspace.metadata.cargo-machete]
 ignored = ["prost"]
@@ -28,11 +28,12 @@ tokio = { version = "1.46", features = ["macros", "rt-multi-thread"] }
 tonic = "*"
 tonic-build = "*"
 tracing = "0.1"
+strum = "0.27"
 tracing-appender = "0.2"
 tracing-subscriber = { version = "0.3", features = ["json", "env-filter"] }
 
 #sercli = { path = "../deps/sercli/sercli" }
-sercli = { git = "https://github.com/vladasz/sercli.git", rev = "5988dd243b0437c92971ab0c37d349208d91ed37" }
+sercli = { git = "https://github.com/vladasz/sercli.git", rev = "960cb152c8bf1a3b1c98030c9288ee5d3b2eb91f" }
 
 #store = { path = "../test-engine/deps/store" }
 

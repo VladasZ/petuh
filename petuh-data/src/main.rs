@@ -3,6 +3,7 @@ mod service;
 
 use anyhow::Result;
 use common::initial_setup;
+use entities::*;
 use tonic::transport::Server;
 use tracing::info;
 
@@ -31,7 +32,7 @@ async fn main() -> Result<()> {
 mod tests {
 
     use anyhow::Result;
-    use sercli::db::prepare_db;
+    use sercli::db::{create_migration, prepare_db};
 
     use crate::entities::Model;
 
@@ -52,5 +53,11 @@ mod tests {
         let pool = prepare_db("../petuh-data/migrations").await?;
         Model::drop_all_tables(&pool).await?;
         sercli::db::stop_containers()
+    }
+
+    #[ignore]
+    #[test]
+    fn new_migration() -> Result<()> {
+        create_migration("../petuh-data/migrations", "add_user_stats")
     }
 }
