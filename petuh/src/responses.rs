@@ -86,14 +86,11 @@ pub async fn list_responses(chat_id: ChatId, bot: Bot) -> Result<()> {
 pub async fn check_and_respond(msg: &str, chat_id: ChatId, bot: &Bot) -> Result<()> {
     let responses = DataClient::get_responses().await?;
 
-    let Some(response) = responses
-        .iter()
-        .find(|res| res.chat_id as i64 == chat_id.0 && msg.to_lowercase().contains(&res.request))
-    else {
-        return Ok(());
-    };
-
-    bot.send_message(chat_id, &response.response).await?;
+    for response in responses {
+        if response.chat_id == chat_id.0 && msg.to_lowercase().contains(&response.request) {
+            bot.send_message(chat_id, &response.response).await?;
+        }
+    }
 
     Ok(())
 }
