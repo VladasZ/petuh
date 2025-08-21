@@ -5,7 +5,7 @@ use teloxide::{
     Bot,
     prelude::{ChatId, Requester},
 };
-use tracing::{info, instrument};
+use tracing::instrument;
 
 use crate::{data::DataClient, llm::petuh::SavedResponse};
 
@@ -29,10 +29,6 @@ pub async fn add_response(msg: &str, user: teloxide::types::User, chat_id: ChatI
         )
         .await?;
         return Ok(());
-    }
-
-    if !DataClient::add_user(&user).await?.exists {
-        info!(user = format!("{user:?}"), "user added");
     }
 
     DataClient::add_response(SavedResponse {
@@ -72,7 +68,7 @@ pub async fn list_responses(chat_id: ChatId, bot: Bot) -> Result<()> {
         )?;
 
         if let Some(nickname) = user.nickname {
-            write!(response, " ({})", nickname)?;
+            write!(response, " ({nickname})")?;
         }
 
         writeln!(response)?;

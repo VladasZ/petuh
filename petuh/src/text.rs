@@ -7,10 +7,11 @@ use teloxide::{
     sugar::request::RequestReplyExt,
     types::{InputFile, MediaKind, Message, MessageKind, ReactionType},
 };
-use tracing::{error, instrument};
+use tracing::{error, info, instrument};
 
 use crate::{
     APP_VERSION, PETUHI,
+    data::DataClient,
     llm::{LLMClient, petuh::Personality},
     responses::{add_response, check_and_respond, contains_add_response_query},
     weather::get_weather,
@@ -27,6 +28,18 @@ pub async fn handle_text(bot: Bot, msg: Message) -> ResponseResult<()> {
     const REACTIONS: &[&str] = &["🤡", "🔥", "💯", "💊", "🤮", "🤩", "👏", "💩"];
 
     dbg!(&msg);
+
+    if let Some(ref user) = msg.from {
+        if !DataClient::add_user(user)
+            .await
+            .map_err(|err| RequestError::Api(ApiError::Unknown(err.to_string())))?
+            .exists
+        {
+            info!(user = format!("{user:?}"), "user added");
+        }
+    } else {
+        error!(msg = format!("{:?}", msg), "Message without user");
+    }
 
     if (0..REACTION_PROBABILITY).fake::<u32>() == 0 {
         let mut reaction = bot.set_message_reaction(msg.chat.id, msg.id);
@@ -85,9 +98,8 @@ pub async fn handle_text(bot: Bot, msg: Message) -> ResponseResult<()> {
                     .await
                     .map_err(|err| RequestError::Api(ApiError::Unknown(err.to_string())))?;
                 return Ok(());
-            } else {
-                error!(msg = format!("{:?}", msg), "Message without user");
             }
+            error!(msg = format!("{:?}", msg), "Message without user");
         }
 
         if text.contains("я тупой пятух") {

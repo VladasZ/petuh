@@ -36,7 +36,7 @@ impl DataClient {
         Ok(responses.into_inner().responses)
     }
 
-    pub async fn remove_response(response: SavedResponse) -> Result<Vec<SavedResponse>> {
+    pub async fn _remove_response(response: SavedResponse) -> Result<Vec<SavedResponse>> {
         let responses = Self::get_client().await.remove_response(response).await?;
 
         Ok(responses.into_inner().responses)
@@ -60,7 +60,7 @@ impl DataClient {
     pub async fn get_user(user_id: i32) -> Result<User> {
         let response = Self::get_client().await.get_user(GetUserRequest { user_id }).await?;
 
-        Ok((response.into_inner().into()))
+        Ok(response.into_inner())
     }
 }
 
@@ -76,6 +76,8 @@ mod test {
         assert_eq!(DataClient::get_responses().await?, vec![]);
 
         let response = SavedResponse {
+            id:       1,
+            user_id:  20,
             request:  "vlik".to_string(),
             response: "pth".to_string(),
         };
@@ -87,7 +89,7 @@ mod test {
 
         assert_eq!(DataClient::get_responses().await?, vec![response.clone()]);
 
-        DataClient::remove_response(response.clone()).await?;
+        DataClient::_remove_response(response.clone()).await?;
 
         assert_eq!(DataClient::get_responses().await?, vec![]);
 
