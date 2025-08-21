@@ -11,15 +11,19 @@ stop:
 	kubectl delete deployment petuh -n petuh
 
 tags:
+	curl http://192.168.0.201:30500/v2/petuh-base/tags/list
 	curl http://192.168.0.201:30500/v2/petuh/tags/list
 	curl http://192.168.0.201:30500/v2/petuh-llm/tags/list
 	curl http://192.168.0.201:30500/v2/petuh-data/tags/list
 
+dock-base:
+	python3 ./build/dock.py petuh-base ./infra/Dockerfile 0.1.0
+
 dock:
 	python3 ./build/build-linux.py
-	python3 ./build/dock.py petuh 0.15.100
-	python3 ./build/dock.py petuh-llm 0.15.100
-	python3 ./build/dock.py petuh-data 0.15.100
+	python3 ./build/dock.py petuh ./petuh/Dockerfile 0.15.101
+	python3 ./build/dock.py petuh-llm ./petuh-llm/Dockerfile 0.15.101
+	python3 ./build/dock.py petuh-data ./petuh-data/Dockerfile 0.15.101
 
 d:
 	docker compose up petuh-data petuh-llm pg-rw

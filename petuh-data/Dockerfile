@@ -1,10 +1,4 @@
-FROM debian:bookworm-slim
-
-# Install OpenSSL runtime and certs
-RUN apt update && apt install -y \
-    libssl3 \
-    ca-certificates \
-    && rm -rf /var/lib/apt/lists/*
+FROM 192.168.0.201:30500/petuh-base:0.1.0
 
 COPY target/x86_64-unknown-linux-gnu/release/petuh-data /usr/local/bin/petuh-data
 COPY .env /app/.env
