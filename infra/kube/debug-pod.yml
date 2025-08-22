@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: debug-pod
+  namespace: petuh
+spec:
+  replicas: 1
+  revisionHistoryLimit: 3
+  selector:
+    matchLabels:
+      app: debug-pod
+  template:
+    metadata:
+      labels:
+        app: debug-pod
+    spec:
+      containers:
+        - name: debug-pod
+          image: redis:7
+          command: [ "sleep", "infinity" ]
+          stdin: true
+          tty: true

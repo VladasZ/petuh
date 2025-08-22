@@ -1,0 +1,12 @@
+[package]
+edition.workspace = true
+name = "tests"
+version.workspace = true
+
+[dependencies]
+anyhow = { workspace = true }
+tokio = { workspace = true }
+tracing = { workspace = true }
+redis = { workspace = true }
+
+common = { workspace = true }

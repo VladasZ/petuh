@@ -1,7 +1,7 @@
 [workspace]
 
 default-members = ["petuh"]
-members = ["petuh", "petuh-llm", "petuh-data", "common"]
+members = ["petuh", "petuh-llm", "petuh-data", "common", "tests"]
 
 resolver = "3"
 
@@ -31,6 +31,7 @@ tracing = "0.1"
 strum = "0.27"
 tracing-appender = "0.2"
 tracing-subscriber = { version = "0.3", features = ["json", "env-filter"] }
+redis = { version = "0.32", features = ["cluster"] }
 
 #sercli = { path = "../deps/sercli/sercli" }
 sercli = { git = "https://github.com/vladasz/sercli.git", rev = "960cb152c8bf1a3b1c98030c9288ee5d3b2eb91f" }
