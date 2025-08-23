@@ -13,6 +13,7 @@ use crate::{
     llm::{LLMClient, petuh::Personality},
     phrases::{kto, vladik_jopoliz},
     responses::list_responses,
+    user_extension::UserExtension,
 };
 
 #[derive(BotCommands, Debug, Clone)]
@@ -52,6 +53,11 @@ pub enum Command {
 #[instrument]
 pub async fn handle_command(bot: Bot, msg: Message, cmd: Command) -> ResponseResult<()> {
     dbg!(&msg);
+
+    if let Some(ref user) = msg.from {
+        user.set_last_message_timepestamp(&msg.chat.id)
+            .map_err(|err| RequestError::Api(ApiError::Unknown(err.to_string())))?;
+    };
 
     if (0..15).fake::<u32>() == 5 {
         bot.send_animation(

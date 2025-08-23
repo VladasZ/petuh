@@ -1,6 +1,6 @@
 services:
   petuh:
-    image: 192.168.0.201:30500/petuh:0.17.100
+    image: 192.168.0.201:30500/petuh:0.17.102
     platform: linux/amd64
     container_name: petuh
     restart: unless-stopped
@@ -12,7 +12,7 @@ services:
       - petuh-net
 
   petuh-llm:
-    image: 192.168.0.201:30500/petuh-llm:0.17.100
+    image: 192.168.0.201:30500/petuh-llm:0.17.102
     platform: linux/amd64
     container_name: petuh-llm
     restart: unless-stopped
@@ -26,7 +26,7 @@ services:
       - petuh-net
 
   petuh-data:
-    image: 192.168.0.201:30500/petuh-data:0.17.100
+    image: 192.168.0.201:30500/petuh-data:0.17.102
     platform: linux/amd64
     container_name: petuh-data
     restart: unless-stopped

@@ -14,6 +14,7 @@ use crate::{
     data::DataClient,
     llm::{LLMClient, petuh::Personality},
     responses::{add_response, check_and_respond, contains_add_response_query},
+    user_extension::UserExtension,
     weather::get_weather,
     yayko::yayko_strike,
 };
@@ -26,6 +27,11 @@ const REACTION_PROBABILITY: u32 = 30;
 #[instrument]
 pub async fn handle_text(bot: Bot, msg: Message) -> ResponseResult<()> {
     const REACTIONS: &[&str] = &["🤡", "🔥", "💯", "💊", "🤮", "🤩", "👏", "💩"];
+
+    if let Some(ref user) = msg.from {
+        user.set_last_message_timepestamp(&msg.chat.id)
+            .map_err(|err| RequestError::Api(ApiError::Unknown(err.to_string())))?;
+    };
 
     dbg!(&msg);
 

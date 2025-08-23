@@ -5,7 +5,8 @@ use std::{
 };
 
 use anyhow::Result;
-use redis::{ToRedisArgs, TypedCommands};
+use chrono::Local;
+use redis::{ExistenceCheck, SetOptions, ToRedisArgs, TypedCommands};
 use tracing::{info, trace};
 
 use crate::Environment;
@@ -22,6 +23,18 @@ impl Redis {
             redis_cluster()?.set(Self::key(key), value)?;
         } else {
             redis()?.set(Self::key(key), value)?;
+        }
+
+        Ok(())
+    }
+
+    pub fn set_if_does_not_exists(key: impl Display, value: impl ToRedisArgs + Send + Sync) -> Result<()> {
+        let options = SetOptions::default().conditional_set(ExistenceCheck::NX);
+
+        if Environment::production() {
+            redis_cluster()?.set_options(Self::key(key), value, options)?;
+        } else {
+            redis()?.set_options(Self::key(key), value, options)?;
         }
 
         Ok(())
@@ -48,9 +61,14 @@ impl Redis {
 }
 
 impl Redis {
-    pub(crate) fn set_app_name(name: &'static str) {
+    pub(crate) fn set_app_name(name: &'static str) -> Result<()> {
         APP_NAME.set(name).expect("App name for Redis is set twice");
         trace!(app_name = name, "App name is not set for Redis");
+
+        let now = Local::now();
+        let timestamp = now.format("%Y-%m-%d %H:%M:%S").to_string();
+
+        Redis::set_if_does_not_exists("first_redis_usage", timestamp)
     }
 
     pub(crate) fn app_name() -> &'static str {

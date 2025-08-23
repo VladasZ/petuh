@@ -12,6 +12,7 @@ rand = { workspace = true }
 reqwest = { workspace = true }
 serde = { workspace = true }
 teloxide = { workspace = true }
+chrono = { workspace = true }
 tokio = { workspace = true }
 tonic = { workspace = true }
 tracing = { workspace = true }

@@ -12,6 +12,7 @@ mod llm;
 mod phrases;
 mod responses;
 mod text;
+mod user_extension;
 mod weather;
 mod yayko;
 
