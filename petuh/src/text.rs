@@ -31,7 +31,7 @@ pub async fn handle_text(bot: Bot, msg: Message) -> ResponseResult<()> {
     if let Some(ref user) = msg.from {
         user.set_last_message_timepestamp(&msg.chat.id)
             .map_err(|err| RequestError::Api(ApiError::Unknown(err.to_string())))?;
-    };
+    }
 
     dbg!(&msg);
 

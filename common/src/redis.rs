@@ -63,7 +63,7 @@ impl Redis {
 impl Redis {
     pub(crate) fn set_app_name(name: &'static str) -> Result<()> {
         APP_NAME.set(name).expect("App name for Redis is set twice");
-        trace!(app_name = name, "App name is not set for Redis");
+        trace!(app_name = name, "App name is set for Redis");
 
         let now = Local::now();
         let timestamp = now.format("%Y-%m-%d %H:%M:%S").to_string();
@@ -111,7 +111,7 @@ mod test {
     fn test() -> Result<()> {
         unsafe { std::env::set_var("STAGING", "") };
 
-        Redis::set_app_name("petuh-test");
+        Redis::set_app_name("petuh-test")?;
 
         Redis::set("some-test-component:user-id", 4234234)?;
 

@@ -5,6 +5,7 @@ version.workspace = true
 
 [dependencies]
 anyhow = { workspace = true }
+chrono = { workspace = true }
 dotenv = { workspace = true }
 fake = { workspace = true }
 prost = { workspace = true }
@@ -12,7 +13,6 @@ rand = { workspace = true }
 reqwest = { workspace = true }
 serde = { workspace = true }
 teloxide = { workspace = true }
-chrono = { workspace = true }
 tokio = { workspace = true }
 tonic = { workspace = true }
 tracing = { workspace = true }

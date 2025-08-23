@@ -557,7 +557,7 @@ dependencies = [
 
 [[package]]
 name = "common"
-version = "0.17.102"
+version = "0.17.103"
 dependencies = [
  "anyhow",
  "chrono",
@@ -2073,7 +2073,7 @@ dependencies = [
 
 [[package]]
 name = "petuh"
-version = "0.17.102"
+version = "0.17.103"
 dependencies = [
  "anyhow",
  "chrono",
@@ -2093,7 +2093,7 @@ dependencies = [
 
 [[package]]
 name = "petuh-data"
-version = "0.17.102"
+version = "0.17.103"
 dependencies = [
  "anyhow",
  "common",
@@ -2110,7 +2110,7 @@ dependencies = [
 
 [[package]]
 name = "petuh-llm"
-version = "0.17.102"
+version = "0.17.103"
 dependencies = [
  "anyhow",
  "common",
@@ -2127,7 +2127,7 @@ dependencies = [
 
 [[package]]
 name = "petuh-tests"
-version = "0.17.102"
+version = "0.17.103"
 dependencies = [
  "anyhow",
  "common",

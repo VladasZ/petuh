@@ -1,4 +1,4 @@
-{"timestamp":"2025-08-23T12:45:24.349578Z","level":"INFO","fields":{"message":"started","app_name":"petuh-data","environment":"staging","version":"0.17.102"},"target":"common::setup","filename":"common/src/setup.rs","line_number":11}
+{"timestamp":"2025-08-23T12:45:24.349578Z","level":"INFO","fields":{"message":"started","app_name":"petuh-data","environment":"staging","version":"0.17.103"},"target":"common::setup","filename":"common/src/setup.rs","line_number":11}
 {"timestamp":"2025-08-23T12:45:24.349866Z","level":"INFO","fields":{"message":"Starting petuh-data"},"target":"petuh_data","filename":"petuh-data/src/main.rs","line_number":18}
 {"timestamp":"2025-08-23T12:45:24.349932Z","level":"INFO","fields":{"connection_string":"postgresql://petuh:petuh@pg-rw:5432/petuh_db"},"target":"petuh_data","filename":"petuh-data/src/main.rs","line_number":19}
 {"timestamp":"2025-08-23T12:45:24.419774Z","level":"INFO","fields":{"message":"petuh-data server listening on 0.0.0.0:50052"},"target":"petuh_data","filename":"petuh-data/src/main.rs","line_number":24}
