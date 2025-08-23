@@ -557,9 +557,10 @@ dependencies = [
 
 [[package]]
 name = "common"
-version = "0.16.101"
+version = "0.17.102"
 dependencies = [
  "anyhow",
+ "chrono",
  "dotenv",
  "redis",
  "sentry",
@@ -2072,9 +2073,10 @@ dependencies = [
 
 [[package]]
 name = "petuh"
-version = "0.16.101"
+version = "0.17.102"
 dependencies = [
  "anyhow",
+ "chrono",
  "common",
  "dotenv",
  "fake",
@@ -2091,7 +2093,7 @@ dependencies = [
 
 [[package]]
 name = "petuh-data"
-version = "0.16.101"
+version = "0.17.102"
 dependencies = [
  "anyhow",
  "common",
@@ -2108,7 +2110,7 @@ dependencies = [
 
 [[package]]
 name = "petuh-llm"
-version = "0.16.101"
+version = "0.17.102"
 dependencies = [
  "anyhow",
  "common",
@@ -2120,6 +2122,16 @@ dependencies = [
  "tokio",
  "tonic",
  "tonic-build",
+ "tracing",
+]
+
+[[package]]
+name = "petuh-tests"
+version = "0.17.102"
+dependencies = [
+ "anyhow",
+ "common",
+ "tokio",
  "tracing",
 ]
 
@@ -3763,17 +3775,6 @@ dependencies = [
  "once_cell",
  "rustix",
  "windows-sys 0.59.0",
-]
-
-[[package]]
-name = "tests"
-version = "0.16.101"
-dependencies = [
- "anyhow",
- "common",
- "redis",
- "tokio",
- "tracing",
 ]
 
 [[package]]

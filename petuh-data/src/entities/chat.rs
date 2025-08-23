@@ -1,4 +1,3 @@
-
 #[allow(unused_imports)]
 #[allow(clippy::wildcard_imports)]
 use sercli::*;
@@ -19,6 +18,6 @@ mod reflected {
 )]
 pub struct Chat {
     pub telegram_id: i64,
-    pub name: String,
-    pub kind: crate::ChatKind,
+    pub name:        String,
+    pub kind:        crate::ChatKind,
 }

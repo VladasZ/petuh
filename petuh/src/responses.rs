@@ -33,7 +33,7 @@ pub async fn add_response(msg: &str, user: teloxide::types::User, chat_id: ChatI
 
     DataClient::add_response(SavedResponse {
         user_id:  user.id.0.try_into().expect("Failed to convert user id"),
-        chat_id:  chat_id.0.try_into().expect("Failed to convert chat id"),
+        chat_id:  chat_id.0,
         request:  request.to_string(),
         response: response.to_string(),
     })

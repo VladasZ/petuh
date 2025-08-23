@@ -12,16 +12,24 @@ mod llm;
 mod phrases;
 mod responses;
 mod text;
+mod user_extension;
 mod weather;
 mod yayko;
 
 use anyhow::Result;
-use common::initial_setup;
+use common::{Environment, initial_setup};
 use teloxide::prelude::*;
 
 pub const APP_VERSION: &str = env!("CARGO_PKG_VERSION");
 
 const PETUHI: &[&str] = &["Максим", "Владик", "Владас", "Рома", "Настя", "Алёна", "Витёк"];
+
+fn teloxide_token() -> Result<String> {
+    Ok(std::env::var(Environment::select(
+        "TELOXIDE_TOKEN_STAGING",
+        "TELOXIDE_TOKEN_PRODUCTION",
+    ))?)
+}
 
 #[tokio::main]
 async fn main() -> Result<()> {
@@ -31,7 +39,7 @@ async fn main() -> Result<()> {
 
     info!("Starting Telegram bot...");
 
-    let bot = Bot::from_env();
+    let bot = Bot::new(teloxide_token()?);
 
     let handler = dptree::entry()
         .branch(Update::filter_message().filter_command::<Command>().endpoint(handle_command))

@@ -1,2 +1,5 @@
 [type.rust]
-extend-ignore-re = ["[A-Za-z0-9_-]{50,}"]
+extend-ignore-re = [
+  "[A-Za-z0-9_-]{50,}",
+  "redis-cluster-master\\.ot-operators\\.svc\\.cluster\\.local",
+]

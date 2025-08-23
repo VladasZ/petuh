@@ -9,9 +9,9 @@ prost = { workspace = true }
 sercli = { workspace = true }
 serde = { workspace = true }
 sqlx = { workspace = true }
+strum = { workspace = true }
 tokio = { workspace = true }
 tonic = { workspace = true }
-strum = { workspace = true }
 tracing = { workspace = true }
 
 common = { workspace = true }

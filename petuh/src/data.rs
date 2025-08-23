@@ -75,7 +75,7 @@ impl DataClient {
         Self::get_client()
             .await
             .add_chat(Chat {
-                telegram_id: chat.id.0.try_into().unwrap(),
+                telegram_id: chat.id.0,
                 name,
                 kind: kind.into(),
             })
@@ -97,8 +97,8 @@ mod test {
         assert_eq!(DataClient::get_responses().await?, vec![]);
 
         let response = SavedResponse {
-            id:       1,
             user_id:  20,
+            chat_id:  12,
             request:  "vlik".to_string(),
             response: "pth".to_string(),
         };
