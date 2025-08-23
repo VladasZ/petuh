@@ -1,30 +1,16 @@
-use std::sync::OnceLock;
+mod environment;
+mod redis;
 
 use anyhow::Result;
+pub use environment::Environment;
 use sentry::ClientInitGuard;
-use tracing::info;
 use tracing_appender::{non_blocking, non_blocking::WorkerGuard, rolling};
 use tracing_subscriber::{EnvFilter, fmt, layer::SubscriberExt, util::SubscriberInitExt};
 
-static REDIS: OnceLock<redis::cluster::ClusterClient> = OnceLock::new();
+use crate::redis::Redis;
 
-pub fn redis() -> Result<redis::cluster::ClusterConnection> {
-    let client = REDIS.get_or_init(|| {
-        let redis_url = std::env::var("REDIS_URL").expect("Failed to get REDIS_URL");
-
-        info!(redis_url = redis_url);
-
-        dbg!(&redis_url);
-
-        let nodes = vec![redis_url];
-
-        redis::cluster::ClusterClient::new(nodes).expect("Failed to open redis")
-    });
-
-    Ok(client.get_connection()?)
-}
-
-pub fn initial_setup(app: &str) -> Result<(ClientInitGuard, (WorkerGuard, WorkerGuard))> {
+pub fn initial_setup(app: &'static str) -> Result<(ClientInitGuard, (WorkerGuard, WorkerGuard))> {
+    Redis::set_app_name(app);
     Ok((setup_sentry()?, setup_logging(app)?))
 }
 
@@ -45,7 +31,7 @@ fn setup_sentry() -> Result<ClientInitGuard> {
     Ok(guard)
 }
 
-fn setup_logging(app: &str) -> Result<(WorkerGuard, WorkerGuard)> {
+fn setup_logging(app: &'static str) -> Result<(WorkerGuard, WorkerGuard)> {
     std::fs::create_dir_all("logs")?;
 
     let file_appender = rolling::daily("logs", format!("{app}.log"));
@@ -54,7 +40,7 @@ fn setup_logging(app: &str) -> Result<(WorkerGuard, WorkerGuard)> {
     let (console_writer, guard2) = non_blocking(std::io::stdout());
 
     let filter = EnvFilter::new(format!("{}=trace", app.replace('-', "_")))
-        // .add_directive("my_crate::module=trace".parse().unwrap()) // Optional: specific module
+        .add_directive("common=trace".parse()?)
         .add_directive("warn".parse()?); // Show warnings from all crates
 
     tracing_subscriber::registry()

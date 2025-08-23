@@ -1,6 +1,6 @@
 services:
   petuh:
-    image: 192.168.0.201:30500/petuh:0.16.101
+    image: 192.168.0.201:30500/petuh:0.16.102
     platform: linux/amd64
     container_name: petuh
     restart: unless-stopped
@@ -10,7 +10,7 @@ services:
       - petuh-net
 
   petuh-llm:
-    image: 192.168.0.201:30500/petuh-llm:0.16.101
+    image: 192.168.0.201:30500/petuh-llm:0.16.102
     platform: linux/amd64
     container_name: petuh-llm
     restart: unless-stopped
@@ -22,7 +22,7 @@ services:
       - petuh-net
 
   petuh-data:
-    image: 192.168.0.201:30500/petuh-data:0.16.101
+    image: 192.168.0.201:30500/petuh-data:0.16.102
     platform: linux/amd64
     container_name: petuh-data
     restart: unless-stopped
@@ -44,6 +44,14 @@ services:
       - postgres_data:/var/lib/postgresql/data
     ports:
       - "5432:5432"
+    networks:
+      - petuh-net
+
+  redis:
+    image: redis:8
+    container_name: redis
+    ports:
+      - "6379:6379"
     networks:
       - petuh-net
 

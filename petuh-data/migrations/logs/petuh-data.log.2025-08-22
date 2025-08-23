@@ -1,0 +1,3 @@
+{"timestamp":"2025-08-22T15:08:32.553297Z","level":"INFO","fields":{"message":"Starting petuh-data"},"target":"petuh_data","filename":"petuh-data/src/main.rs","line_number":18}
+{"timestamp":"2025-08-22T15:08:32.553477Z","level":"INFO","fields":{"connection_string":"postgresql://petuh:petuh@pg-rw:5432/petuh_db"},"target":"petuh_data","filename":"petuh-data/src/main.rs","line_number":19}
+{"timestamp":"2025-08-22T15:08:32.614291Z","level":"INFO","fields":{"message":"petuh-data server listening on 0.0.0.0:50052"},"target":"petuh_data","filename":"petuh-data/src/main.rs","line_number":24}

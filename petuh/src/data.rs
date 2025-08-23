@@ -97,8 +97,8 @@ mod test {
         assert_eq!(DataClient::get_responses().await?, vec![]);
 
         let response = SavedResponse {
-            id:       1,
             user_id:  20,
+            chat_id:  12,
             request:  "vlik".to_string(),
             response: "pth".to_string(),
         };

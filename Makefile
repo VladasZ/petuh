@@ -21,12 +21,19 @@ dock-base:
 
 dock:
 	python3 ./build/build-linux.py
-	python3 ./build/dock.py petuh ./petuh/Dockerfile 0.16.101
-	python3 ./build/dock.py petuh-llm ./petuh-llm/Dockerfile 0.16.101
-	python3 ./build/dock.py petuh-data ./petuh-data/Dockerfile 0.16.101
+	python3 ./build/dock.py petuh ./petuh/Dockerfile 0.16.102
+	python3 ./build/dock.py petuh-llm ./petuh-llm/Dockerfile 0.16.102
+	python3 ./build/dock.py petuh-data ./petuh-data/Dockerfile 0.16.102
 
 d:
 	docker compose up petuh-data petuh-llm pg-rw
+
+services:
+	docker compose up pg-rw redis
+
+undock:
+	docker compose down
+	docker compose rm
 
 lint:
 	cargo clippy \

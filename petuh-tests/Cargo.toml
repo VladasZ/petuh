@@ -1,6 +1,6 @@
 [package]
 edition.workspace = true
-name = "tests"
+name = "petuh-tests"
 version.workspace = true
 
 [dependencies]
