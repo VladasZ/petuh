@@ -1,4 +1,3 @@
-
 #![allow(dead_code)]
 
 use anyhow::Result;
@@ -7,12 +6,7 @@ pub struct Model;
 
 impl Model {
     pub fn tables() -> &'static [&'static str] {
-        &[
-            "chats",
-            "saved_responses",
-            "users",
-            "user_stats",
-        ]
+        &["chats", "saved_responses", "users", "user_stats"]
     }
 
     pub async fn drop_all_tables(pool: &sqlx::PgPool) -> Result<()> {
@@ -25,4 +19,3 @@ impl Model {
         Ok(())
     }
 }
-        

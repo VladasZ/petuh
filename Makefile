@@ -21,9 +21,9 @@ dock-base:
 
 dock:
 	python3 ./build/build-linux.py
-	python3 ./build/dock.py petuh ./petuh/Dockerfile 0.16.102
-	python3 ./build/dock.py petuh-llm ./petuh-llm/Dockerfile 0.16.102
-	python3 ./build/dock.py petuh-data ./petuh-data/Dockerfile 0.16.102
+	python3 ./build/dock.py petuh ./petuh/Dockerfile 0.17.100
+	python3 ./build/dock.py petuh-llm ./petuh-llm/Dockerfile 0.17.100
+	python3 ./build/dock.py petuh-data ./petuh-data/Dockerfile 0.17.100
 
 d:
 	docker compose up petuh-data petuh-llm pg-rw

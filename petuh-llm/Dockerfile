@@ -4,6 +4,8 @@ COPY target/x86_64-unknown-linux-gnu/release/petuh-llm /usr/local/bin/petuh-llm
 COPY .env /app/.env
 WORKDIR /app
 
+ENV PRODUCTION=true
+
 RUN chmod +x /usr/local/bin/petuh-llm
 
 ENTRYPOINT ["/usr/local/bin/petuh-llm"]

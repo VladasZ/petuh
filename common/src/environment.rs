@@ -10,21 +10,29 @@ pub enum Environment {
 impl Environment {
     fn get() -> &'static Self {
         ENVIRONMENT.get_or_init(|| {
-            if let Ok(_) = std::env::var("STAGING") {
+            if std::env::var("STAGING").is_ok() {
                 Self::Staging
-            } else if let Ok(_) = std::env::var("PRODUCTION") {
+            } else if std::env::var("PRODUCTION").is_ok() {
                 Self::Production
             } else {
-                panic!("No STAGING or PRODUCTION env var supplied")
+                Self::Staging
             }
         })
     }
 
-    pub fn staging() -> bool {
+    pub(crate) fn string() -> &'static str {
+        Self::select("staging", "production")
+    }
+
+    pub(crate) fn staging() -> bool {
         matches!(Self::get(), Self::Staging)
     }
 
-    pub fn production() -> bool {
+    pub(crate) fn production() -> bool {
         matches!(Self::get(), Self::Production)
+    }
+
+    pub fn select<T>(staging: T, production: T) -> T {
+        if Self::staging() { staging } else { production }
     }
 }

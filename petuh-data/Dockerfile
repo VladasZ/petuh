@@ -5,6 +5,8 @@ COPY .env /app/.env
 COPY ./petuh-data/migrations /app/../migrations
 WORKDIR /app
 
+ENV PRODUCTION=true
+
 RUN chmod +x /usr/local/bin/petuh-data
 
 ENTRYPOINT ["/usr/local/bin/petuh-data"]

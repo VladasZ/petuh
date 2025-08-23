@@ -1,33 +1,39 @@
 services:
   petuh:
-    image: 192.168.0.201:30500/petuh:0.16.102
+    image: 192.168.0.201:30500/petuh:0.17.100
     platform: linux/amd64
     container_name: petuh
     restart: unless-stopped
+    environment:
+      - STAGING=true
     volumes:
       - ./logs:/app/logs
     networks:
       - petuh-net
 
   petuh-llm:
-    image: 192.168.0.201:30500/petuh-llm:0.16.102
+    image: 192.168.0.201:30500/petuh-llm:0.17.100
     platform: linux/amd64
     container_name: petuh-llm
     restart: unless-stopped
     ports:
       - "50051:50051"
+    environment:
+      - STAGING=true
     volumes:
       - ./logs:/app/logs
     networks:
       - petuh-net
 
   petuh-data:
-    image: 192.168.0.201:30500/petuh-data:0.16.102
+    image: 192.168.0.201:30500/petuh-data:0.17.100
     platform: linux/amd64
     container_name: petuh-data
     restart: unless-stopped
     ports:
       - "50052:50052"
+    environment:
+      - STAGING=true
     volumes:
       - ./logs:/app/logs
     networks:

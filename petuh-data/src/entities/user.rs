@@ -1,4 +1,3 @@
-
 #[allow(unused_imports)]
 #[allow(clippy::wildcard_imports)]
 use sercli::*;
@@ -19,8 +18,8 @@ mod reflected {
 )]
 pub struct User {
     pub telegram_id: i64,
-    pub is_bot: bool,
-    pub first_name: String,
-    pub username: Option<String>,
-    pub nickname: Option<String>,
+    pub is_bot:      bool,
+    pub first_name:  String,
+    pub username:    Option<String>,
+    pub nickname:    Option<String>,
 }

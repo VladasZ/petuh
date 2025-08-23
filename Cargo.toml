@@ -7,7 +7,7 @@ resolver = "3"
 
 [workspace.package]
 edition = "2024"
-version = "0.16.102"
+version = "0.17.100"
 
 [workspace.metadata.cargo-machete]
 ignored = ["prost"]
@@ -18,20 +18,20 @@ dotenv = "0.15"
 fake = "4.2"
 prost = "0.13"
 rand = "0.9"
+redis = { version = "0.32", features = ["cluster"] }
 reqwest = { version = "0.12", features = ["rustls-tls"] }
 sentry = "0.42"
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 sqlx = { version = "0.8", features = ["runtime-tokio-rustls", "postgres", "rust_decimal", "chrono"] }
+strum = "0.27"
 teloxide = { version = "0.17", features = ["rustls", "macros"] }
 tokio = { version = "1.46", features = ["macros", "rt-multi-thread"] }
 tonic = "*"
 tonic-build = "*"
 tracing = "0.1"
-strum = "0.27"
 tracing-appender = "0.2"
 tracing-subscriber = { version = "0.3", features = ["json", "env-filter"] }
-redis = { version = "0.32", features = ["cluster"] }
 
 #sercli = { path = "../deps/sercli/sercli" }
 sercli = { git = "https://github.com/vladasz/sercli.git", rev = "960cb152c8bf1a3b1c98030c9288ee5d3b2eb91f" }

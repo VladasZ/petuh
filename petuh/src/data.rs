@@ -75,7 +75,7 @@ impl DataClient {
         Self::get_client()
             .await
             .add_chat(Chat {
-                telegram_id: chat.id.0.try_into().unwrap(),
+                telegram_id: chat.id.0,
                 name,
                 kind: kind.into(),
             })

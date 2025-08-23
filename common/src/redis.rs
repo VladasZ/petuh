@@ -53,12 +53,12 @@ impl Redis {
         trace!(app_name = name, "App name is not set for Redis");
     }
 
-    fn app_name() -> &'static str {
+    pub(crate) fn app_name() -> &'static str {
         APP_NAME.get().expect("App name is not set for Redis")
     }
 
     fn key(key: impl Display) -> String {
-        format!("{}:{key}", Self::app_name())
+        format!("{}:{}:{key}", Self::app_name(), Environment::string())
     }
 }
 
@@ -74,7 +74,7 @@ fn redis() -> Result<redis::Connection> {
 
 fn redis_cluster() -> Result<redis::cluster::ClusterConnection> {
     let client = REDIS_CLUSTER.get_or_init(|| {
-        let redis_url = "redis://redis-cluster-master.ot-operators.svc.cluster.local:6379";
+        let redis_url = "redis://redis-cluster-master.ot-operators.svc.cluster.local:6379"; // typos:ignore
         info!(redis_url = redis_url);
         ::redis::cluster::ClusterClient::new(vec![redis_url]).expect("Failed to open redis")
     });

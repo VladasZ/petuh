@@ -16,7 +16,7 @@ mod weather;
 mod yayko;
 
 use anyhow::Result;
-use common::initial_setup;
+use common::{Environment, initial_setup};
 use teloxide::prelude::*;
 
 pub const APP_VERSION: &str = env!("CARGO_PKG_VERSION");
@@ -24,12 +24,10 @@ pub const APP_VERSION: &str = env!("CARGO_PKG_VERSION");
 const PETUHI: &[&str] = &["Максим", "Владик", "Владас", "Рома", "Настя", "Алёна", "Витёк"];
 
 fn teloxide_token() -> Result<String> {
-    #[cfg(feature = "production")]
-    const TELOXIDE_ENV: &str = "TELOXIDE_TOKEN_PRODUCTION";
-    #[cfg(not(feature = "production"))]
-    const TELOXIDE_ENV: &str = "TELOXIDE_TOKEN_STAGING";
-
-    Ok(std::env::var(TELOXIDE_ENV)?)
+    Ok(std::env::var(Environment::select(
+        "TELOXIDE_TOKEN_STAGING",
+        "TELOXIDE_TOKEN_PRODUCTION",
+    ))?)
 }
 
 #[tokio::main]
